@@ -1,0 +1,28 @@
+/node_modules
+/.next/
+/out/
+/coverage/
+.DS_Store
+*.log
+*.tmp
+*.temp
+*.tsbuildinfo
+.env*
+.vercel
+
+# Local editor and agent tooling
+/.claude/
+/.codex/
+/.playwright-mcp/
+/.idea/
+/.vscode/
+AGENTS.md
+CLAUDE.md
+
+# Patch and backup files
+*.bak
+*.orig
+*.rej
+
+# Keep a safe environment template if the project adds one.
+!.env.example
