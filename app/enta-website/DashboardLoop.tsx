@@ -4,7 +4,7 @@ import { useRef } from "react";
 import { useAmbientVideo } from "./useAmbientVideo";
 
 /** Bumped whenever the loop is re-rendered, so browsers refetch it. */
-const DASHBOARD_LOOP_VERSION = "3";
+const DASHBOARD_LOOP_VERSION = "6";
 
 /** The product shot under the hero: a silent screen recording of the dashboard. */
 export function DashboardLoop() {
