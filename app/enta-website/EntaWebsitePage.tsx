@@ -66,8 +66,12 @@ function EntaLogo({
   );
 }
 
+/** Scroll distance in px over which the fade above the dashboard grid dissolves. */
+const SNAPSHOT_FADE_SCROLL_DISTANCE = 280;
+
 export function EntaWebsitePage() {
   const rootRef = useRef<HTMLDivElement>(null);
+  const snapshotGridRef = useRef<HTMLDivElement>(null);
   const heroVideoRef = useRef<HTMLVideoElement>(null);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
@@ -82,10 +86,20 @@ export function EntaWebsitePage() {
 
   useEffect(() => {
     let frame = 0;
+    let lastFade = "";
     const update = () => {
       cancelAnimationFrame(frame);
       frame = requestAnimationFrame(() => {
         setScrolled(window.scrollY >= 10);
+        // The white fade over the top of the dashboard grid is full on landing
+        // and dissolves over the first stretch of scrolling. Written straight to
+        // a CSS variable on the grid itself, so scrolling neither re-renders the
+        // page nor restyles anything outside the grid.
+        const fade = (1 - Math.min(1, window.scrollY / SNAPSHOT_FADE_SCROLL_DISTANCE)).toFixed(3);
+        if (fade !== lastFade) {
+          lastFade = fade;
+          snapshotGridRef.current?.style.setProperty("--snapshot-top-fade", fade);
+        }
         const dark = [...document.querySelectorAll<HTMLElement>("[data-nav-dark='true']")].some(
           (section) => {
             const rect = section.getBoundingClientRect();
@@ -350,7 +364,7 @@ export function EntaWebsitePage() {
         </section>
 
         <section className={styles.featuredSection} aria-label="Enta product and partners">
-          <div className={styles.snapshotGrid}>
+          <div className={styles.snapshotGrid} ref={snapshotGridRef}>
             <div className={styles.dashboardFrame}>
               <DashboardLoop />
             </div>

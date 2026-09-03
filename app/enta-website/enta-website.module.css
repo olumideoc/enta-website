@@ -392,6 +392,7 @@
 }
 
 .snapshotGrid {
+  --snapshot-reveal-distance: clamp(120px, 12vw, 176px);
   position: relative;
   width: min(calc(100% - 176px), 1264px);
   height: 726.8px;
@@ -400,8 +401,10 @@
   background-color: #fff;
 }
 
-/* The grid lines live on a layer behind the dashboard and start crisp at the
-   top edge; no fade sits between the hero and the product. */
+/* The grid lines live on a layer behind the dashboard. A white fade sits over
+   their top edge on landing so the hero melts into the grid; the page scroll
+   handler drives --snapshot-top-fade from 1 to 0 over the first stretch of
+   scrolling, so the fade dissolves and the grid is crisp once you move. */
 .snapshotGrid::before {
   content: "";
   position: absolute;
@@ -413,6 +416,23 @@
     radial-gradient(ellipse 50% 42% at 50% 0%, rgba(73, 139, 246, .14), transparent 78%);
   background-position: 65px 0, 0 0, 0 0;
   background-size: 93px 100%, 100% 32.31px, 100% 100%;
+  pointer-events: none;
+}
+
+.snapshotGrid::after {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  inset: 0 0 auto;
+  height: var(--snapshot-reveal-distance);
+  background: linear-gradient(
+    to bottom,
+    #fff 0,
+    rgba(255, 255, 255, .88) 24px,
+    rgba(255, 255, 255, .45) 72px,
+    rgba(255, 255, 255, 0) 100%
+  );
+  opacity: var(--snapshot-top-fade, 1);
   pointer-events: none;
 }
 
@@ -2416,6 +2436,9 @@
     width: 100%;
     min-height: 360px;
     aspect-ratio: auto;
+  }
+
+  .snapshotGrid::before {
     background-size: 72px 100%, 100% 28px, 100% 100%;
   }
 
