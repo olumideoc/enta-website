@@ -1,11 +1,27 @@
-export const logoStrip = [
-  ["FirstBank", "/enta-website/partner-firstbank.png", 96, 32],
-  ["Candide", "/enta-website/partner-candide.png", 135, 32],
-  ["Telegram", "/enta-website/partner-telegram.png", 124, 32],
-  ["Tether", "/enta-website/partner-tether.png", 100, 32],
-  ["Flashnet", "/enta-website/partner-flashnet.png", 152, 32],
-  ["Visa", "/enta-website/partner-visa.png", 84, 32],
-] as const;
+export type LogoStripItem = {
+  name: string;
+  src: string;
+  /** Intrinsic size of the asset, for next/image's aspect ratio. */
+  width: number;
+  height: number;
+  /** Rendered height in the strip when the default 20px wordmark height is too small, e.g. for a stacked lockup. */
+  displayHeight?: number;
+};
+
+export const logoStrip: readonly LogoStripItem[] = [
+  { name: "FirstBank", src: "/enta-website/partner-firstbank.png", width: 96, height: 32 },
+  { name: "Candide", src: "/enta-website/partner-candide.png", width: 135, height: 32 },
+  { name: "Telegram", src: "/enta-website/partner-telegram.png", width: 124, height: 32 },
+  { name: "Tether", src: "/enta-website/partner-tether.png", width: 100, height: 32 },
+  { name: "Flashnet", src: "/enta-website/partner-flashnet.png", width: 152, height: 32 },
+  {
+    name: "Visa Accelerator Program",
+    src: "/enta-website/partner-visa-accelerator-program.svg",
+    width: 55,
+    height: 28,
+    displayHeight: 36,
+  },
+];
 
 export const audienceCards = [
   {

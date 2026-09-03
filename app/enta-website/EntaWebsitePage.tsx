@@ -380,13 +380,14 @@ export function EntaWebsitePage() {
                     aria-hidden={groupIndex === 1}
                     key={groupIndex}
                   >
-                    {logoStrip.map(([name, src, width, height]) => (
+                    {logoStrip.map(({ name, src, width, height, displayHeight }) => (
                       <Image
                         key={`${groupIndex}-${name}`}
                         src={src}
                         alt={groupIndex === 0 ? name : ""}
                         width={width}
                         height={height}
+                        style={displayHeight ? { height: displayHeight } : undefined}
                       />
                     ))}
                   </div>
