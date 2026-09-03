@@ -27,6 +27,10 @@ function ArrowIcon({ direction }: { direction: "previous" | "next" }) {
 
 export function CustomerReviews() {
   const trackRef = useRef<HTMLUListElement>(null);
+  // Target of the scroll currently in flight, so rapid clicks stack instead of
+  // re-targeting the card the mid-animation scrollLeft happens to be sitting on.
+  const pendingRef = useRef<number | null>(null);
+  const settleRef = useRef<number | null>(null);
   const [edges, setEdges] = useState({ start: true, end: false });
 
   const syncEdges = useCallback(() => {
@@ -40,20 +44,53 @@ export function CustomerReviews() {
     );
   }, []);
 
+  const clearPending = useCallback(() => {
+    pendingRef.current = null;
+    if (settleRef.current !== null) {
+      window.clearTimeout(settleRef.current);
+      settleRef.current = null;
+    }
+  }, []);
+
   useEffect(() => {
     const track = trackRef.current;
     if (!track) return;
 
+    const handleScroll = () => {
+      syncEdges();
+      // Fallback for browsers without `scrollend`: a smooth scroll emits a scroll
+      // event every frame, so 150 ms of silence means it finished or was interrupted.
+      if (settleRef.current !== null) window.clearTimeout(settleRef.current);
+      settleRef.current = window.setTimeout(clearPending, 150);
+    };
+
+    const handleResize = () => {
+      clearPending();
+      syncEdges();
+    };
+
     syncEdges();
-    track.addEventListener("scroll", syncEdges, { passive: true });
-    const observer = new ResizeObserver(syncEdges);
+    track.addEventListener("scroll", handleScroll, { passive: true });
+    track.addEventListener("scrollend", clearPending);
+    track.addEventListener("pointerdown", clearPending, { passive: true });
+    track.addEventListener("touchstart", clearPending, { passive: true });
+    track.addEventListener("wheel", clearPending, { passive: true });
+    const observer = new ResizeObserver(handleResize);
     observer.observe(track);
 
     return () => {
-      track.removeEventListener("scroll", syncEdges);
+      track.removeEventListener("scroll", handleScroll);
+      track.removeEventListener("scrollend", clearPending);
+      track.removeEventListener("pointerdown", clearPending);
+      track.removeEventListener("touchstart", clearPending);
+      track.removeEventListener("wheel", clearPending);
       observer.disconnect();
+      if (settleRef.current !== null) {
+        window.clearTimeout(settleRef.current);
+        settleRef.current = null;
+      }
     };
-  }, [syncEdges]);
+  }, [clearPending, syncEdges]);
 
   const step = (direction: -1 | 1) => {
     const track = trackRef.current;
@@ -69,63 +106,73 @@ export function CustomerReviews() {
       .map((card) => card.offsetLeft - origin)
       .filter((point) => point < max - 1)
       .concat(max);
-    const here = track.scrollLeft;
+    const here = pendingRef.current ?? track.scrollLeft;
     const target =
       direction > 0
         ? points.find((point) => point > here + 1) ?? max
         : [...points].reverse().find((point) => point < here - 1) ?? 0;
 
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    pendingRef.current = target;
     track.scrollTo({ left: target, behavior: reduceMotion ? "auto" : "smooth" });
   };
 
   return (
-    <section
-      className={styles.reviewsSection}
-      aria-labelledby="enta-reviews-title"
-      data-nav-dark="true"
-    >
-      <div className={styles.reviewsInner}>
-        <div className={styles.reviewsAside} data-reveal>
-          <h2 id="enta-reviews-title">Don’t just take our word for it</h2>
-          <div className={styles.reviewsArrows}>
-            <button
-              className={styles.reviewsArrow}
-              type="button"
-              aria-label="Previous reviews"
-              aria-disabled={edges.start}
-              onClick={() => step(-1)}
-            >
-              <ArrowIcon direction="previous" />
-            </button>
-            <button
-              className={styles.reviewsArrow}
-              type="button"
-              aria-label="Next reviews"
-              aria-disabled={edges.end}
-              onClick={() => step(1)}
-            >
-              <ArrowIcon direction="next" />
-            </button>
+    <div className={styles.reviewsFrame}>
+      <section
+        className={styles.reviewsSection}
+        aria-labelledby="enta-reviews-title"
+        data-nav-dark="true"
+      >
+        <div className={styles.reviewsInner}>
+          <div className={styles.reviewsAside} data-reveal>
+            <h2 id="enta-reviews-title">Don’t just take our word for it</h2>
+            <div className={styles.reviewsArrows}>
+              <button
+                className={styles.reviewsArrow}
+                type="button"
+                aria-label="Previous reviews"
+                aria-disabled={edges.start}
+                onClick={() => step(-1)}
+              >
+                <ArrowIcon direction="previous" />
+              </button>
+              <button
+                className={styles.reviewsArrow}
+                type="button"
+                aria-label="Next reviews"
+                aria-disabled={edges.end}
+                onClick={() => step(1)}
+              >
+                <ArrowIcon direction="next" />
+              </button>
+            </div>
           </div>
-        </div>
 
-        <ul className={styles.reviewsTrack} ref={trackRef} aria-label="Customer reviews" data-reveal>
-          {customerReviews.map((review) => (
-            <li className={styles.reviewCard} key={review.name}>
-              <figure>
-                <blockquote>
-                  <p>“{review.quote}”</p>
-                </blockquote>
-                <figcaption className={styles.reviewAuthor}>
-                  <strong>{review.name}</strong>
-                  <span className={styles.reviewRole}>{review.descriptor}</span>
-                </figcaption>
-              </figure>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </section>
+          {/* role="list" is required: WebKit strips list semantics from a list styled with list-style: none. */}
+          <ul
+            className={styles.reviewsTrack}
+            ref={trackRef}
+            role="list"
+            aria-label="Customer reviews"
+            data-reveal
+          >
+            {customerReviews.map((review) => (
+              <li className={styles.reviewCard} key={review.name}>
+                <figure>
+                  <blockquote>
+                    <p>“{review.quote}”</p>
+                  </blockquote>
+                  <figcaption className={styles.reviewAuthor}>
+                    <strong>{review.name}</strong>
+                    <span className={styles.reviewRole}>{review.descriptor}</span>
+                  </figcaption>
+                </figure>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    </div>
   );
 }

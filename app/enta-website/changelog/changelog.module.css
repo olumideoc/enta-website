@@ -1,0 +1,299 @@
+.skipLink {
+  position: fixed;
+  z-index: 500;
+  top: 12px;
+  left: 12px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: #101828;
+  color: #fff !important;
+  font-size: 14px;
+  font-weight: 600;
+  transform: translateY(-180%);
+  transition: transform 160ms cubic-bezier(.16, 1, .3, 1);
+}
+
+.skipLink:focus {
+  transform: translateY(0);
+}
+
+.main {
+  min-height: 100vh;
+  overflow: clip;
+  background: #fff;
+}
+
+.main:focus {
+  outline: none;
+}
+
+.hero {
+  position: relative;
+  isolation: isolate;
+  min-height: 404px;
+  padding-top: 72px;
+  overflow: hidden;
+  background: #dceaf4;
+}
+
+.heroMedia {
+  position: absolute;
+  z-index: 0;
+  top: 72px;
+  right: 0;
+  left: 0;
+  height: 332px;
+  overflow: hidden;
+  background: #dceaf4 url("/enta-website/changelog/sky-poster.jpg") center 30% / cover no-repeat;
+  pointer-events: none;
+}
+
+.heroMedia::after {
+  position: absolute;
+  z-index: 1;
+  content: "";
+  inset: 0;
+  background:
+    radial-gradient(circle at 50% 48%, rgba(255, 255, 255, .42), rgba(255, 255, 255, .08) 52%),
+    linear-gradient(180deg, rgba(255, 255, 255, .18), rgba(255, 255, 255, .36));
+}
+
+.heroVideo {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 30%;
+}
+
+.heroRail {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  width: min(100%, 74rem);
+  min-height: 332px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-inline: auto;
+  padding: 40px max(20px, env(safe-area-inset-left), env(safe-area-inset-right));
+  text-align: center;
+}
+
+.hero h1 {
+  margin: 0;
+  color: #101828;
+  font-size: clamp(2.5rem, 4.5vw, 4rem);
+  font-weight: 600;
+  letter-spacing: -.03em;
+  line-height: 1;
+  text-wrap: balance;
+}
+
+.hero p {
+  max-width: 38rem;
+  margin: 20px 0 0;
+  color: #475467;
+  font-size: 18px;
+  letter-spacing: -.01em;
+  line-height: 1.5;
+  text-wrap: balance;
+}
+
+.feed {
+  background: #fff;
+}
+
+.feedRail {
+  width: min(100%, 74rem);
+  margin-inline: auto;
+  padding: 80px max(20px, env(safe-area-inset-left), env(safe-area-inset-right));
+}
+
+.release {
+  display: grid;
+  grid-template-columns: minmax(9.5rem, .28fr) minmax(0, 1fr);
+  gap: clamp(40px, 7vw, 80px);
+  padding-block: 60px;
+}
+
+.release + .release {
+  border-top: 1px solid #e4e7ec;
+}
+
+.releaseDate {
+  margin: 0;
+  align-self: stretch;
+}
+
+.releaseDate time {
+  position: sticky;
+  top: 104px;
+  display: block;
+  color: #101828;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 22px;
+}
+
+.releaseEntries {
+  display: grid;
+  min-width: 0;
+  gap: 48px;
+}
+
+.entry {
+  min-width: 0;
+}
+
+.entry > .entryType {
+  margin: 0 0 16px;
+  color: #475467;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 22px;
+}
+
+.entry h3 {
+  max-width: 18ch;
+  margin: 0;
+  color: #101828;
+  font-size: 36px;
+  font-weight: 600;
+  letter-spacing: -.025em;
+  line-height: 1.16;
+  text-wrap: balance;
+}
+
+.entry > .entryDescription {
+  max-width: 72ch;
+  margin: 20px 0 0;
+  color: #475467;
+  font-size: 18px;
+  letter-spacing: -.01em;
+  line-height: 1.55;
+  text-wrap: pretty;
+}
+
+.entryMedia {
+  margin: 32px 0 0;
+  overflow: clip;
+  border-radius: 12px;
+}
+
+.entryMedia img {
+  width: 100%;
+  height: auto;
+}
+
+.mobileLogin {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  padding-block: 8px;
+}
+
+.footerBottomAccessible.footerBottomAccessible {
+  color: #98a2b3;
+}
+
+@media (max-width: 809px) {
+  .hero {
+    min-height: 340px;
+    padding-top: 64px;
+  }
+
+  .heroMedia {
+    top: 64px;
+    height: 276px;
+  }
+
+  .heroRail {
+    min-height: 276px;
+  }
+
+  .feedRail {
+    padding-block: 60px;
+  }
+
+  .release {
+    grid-template-columns: minmax(7.5rem, .25fr) minmax(0, 1fr);
+    gap: 32px;
+    padding-block: 48px;
+  }
+
+  .entry h3 {
+    font-size: 32px;
+  }
+
+  .entryDescription {
+    font-size: 17px;
+  }
+}
+
+@media (max-width: 560px) {
+  .hero {
+    min-height: 312px;
+  }
+
+  .heroMedia,
+  .heroRail {
+    height: 248px;
+    min-height: 248px;
+  }
+
+  .heroRail {
+    align-items: flex-start;
+    padding-block: 40px;
+    text-align: left;
+  }
+
+  .hero h1 {
+    font-size: clamp(2rem, 9.75vw, 2.5rem);
+  }
+
+  .hero p {
+    margin-top: 16px;
+  }
+
+  .feedRail {
+    padding-block: 40px;
+  }
+
+  .release {
+    grid-template-columns: 1fr;
+    gap: 32px;
+    padding-block: 48px;
+  }
+
+  .releaseDate time {
+    position: static;
+  }
+
+  .releaseEntries {
+    gap: 40px;
+  }
+
+  .entry > .entryType {
+    margin-bottom: 12px;
+  }
+
+  .entry h3 {
+    font-size: 28px;
+  }
+
+  .entry > .entryDescription {
+    margin-top: 20px;
+    font-size: 17px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skipLink {
+    transition: none;
+  }
+
+  .heroVideo {
+    display: none;
+  }
+}

@@ -24,47 +24,45 @@ export const audienceCards = [
   },
 ] as const;
 
-export const savingsRows = [
+export type FeatureItemMedia = {
+  /** Path stem under enta-landing: `<basename>-light.{webm,mp4}` and `-light-poster.jpg`. */
+  basename: string;
+  /** One full pass of the loop, which is also the item's autoplay dwell. */
+  durationMs: number;
+};
+
+export type FeatureItem = {
+  id: string;
+  label: string;
+  /** Null until the copy is written; the item then renders as a plain label. */
+  description: string | null;
+  /** Absent until the loop for the item has been rendered. */
+  media?: FeatureItemMedia;
+};
+
+export const featureItems: readonly FeatureItem[] = [
   {
-    label: "Held in xAU₮",
-    qualifier: "(Gold)",
-    badge: "+29% vs naira",
-    value: "₦8.5M",
-    icon: "/enta-website/enta-landing/calculator-gold.svg",
-    color: "#d4aa3f",
-    progress: "71.2%",
+    id: "send",
+    label: "Send",
+    description:
+      "Across borders in minutes, at the rate you were shown — checked before it goes: the address, the amount, anything unusual.",
+    media: { basename: "feature-send", durationMs: 7000 },
   },
   {
-    label: "Held in Bitcoin",
-    badge: "+29% vs naira",
-    value: "₦8.5M",
-    color: "#ff8a00",
-    progress: "59%",
+    id: "buy",
+    label: "Buy",
+    description:
+      "Digital dollars, Bitcoin, and gold from your local currency, in a few taps — and it flags the day worth taking.",
+    media: { basename: "feature-buy", durationMs: 19000 },
   },
   {
-    label: "Held in T-bills",
-    badge: "+29% vs naira",
-    value: "₦8.5M",
-    icon: "/enta-website/enta-landing/calculator-tbill.svg",
-    color: "#6f2da8",
-    progress: "44.6%",
+    id: "hold",
+    label: "Hold",
+    description:
+      "In money that keeps its value — and it tells you the moment that matters. You decide, every time.",
+    media: { basename: "feature-hold", durationMs: 12000 },
   },
-  {
-    label: "Held in US Dollars",
-    badge: "+29% vs naira",
-    value: "₦8.5M",
-    icon: "/enta-website/enta-landing/calculator-usd.svg",
-    color: "#c52032",
-    progress: "28.5%",
-  },
-  {
-    label: "Held in Naira",
-    badge: "Baseline",
-    value: "₦8.5M",
-    color: "#165b22",
-    progress: "19.3%",
-  },
-] as const;
+];
 
 export const faqQuestions = [
   "What documents do I need to register?",
@@ -77,15 +75,40 @@ export const footerColumns = [
   {
     title: "Products",
     links: [
-      { label: "Individuals", href: "#individual" },
-      { label: "Business", href: "#business" },
+      { label: "Individuals", href: "/enta-website#individual" },
+      { label: "Business", href: "/enta-website#business" },
+      {
+        label: "Pulse (For Platforms)",
+        href: "https://pulse-staging-seven.vercel.app/",
+        external: true,
+      },
     ],
   },
   {
     title: "Explore",
     links: [
-      { label: "Security", href: "#security" },
+      { label: "Security", href: "/enta-website#security" },
+      { label: "Changelog", href: "/enta-website/changelog" },
+      { label: "Blog", href: null },
     ],
+  },
+] as const;
+
+export const footerSocialLinks = [
+  {
+    label: "Twitter",
+    href: "https://x.com/Entashiga",
+    icon: "twitter",
+  },
+  {
+    label: "Instagram",
+    href: "https://www.instagram.com/entashiga",
+    icon: "instagram",
+  },
+  {
+    label: "TikTok",
+    href: "https://www.tiktok.com/@entashiga",
+    icon: "tiktok",
   },
 ] as const;
 

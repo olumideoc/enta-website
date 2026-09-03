@@ -197,6 +197,12 @@
   gap: 8px;
 }
 
+/* Inside the 12px nav pill (4px inset) a 12px CTA reads rounder than its
+   neighbour; 8px keeps the corners concentric and matches the Log in button. */
+.navActions .primaryButton {
+  border-radius: 8px;
+}
+
 .openApp {
   border-color: #1018284d;
   background: transparent;
@@ -386,33 +392,28 @@
 }
 
 .snapshotGrid {
-  --snapshot-reveal-distance: clamp(120px, 12vw, 176px);
   position: relative;
   width: min(calc(100% - 176px), 1264px);
   height: 726.8px;
   margin: 0 auto;
   overflow: hidden;
   background-color: #fff;
+}
+
+/* The grid lines live on a layer behind the dashboard and start crisp at the
+   top edge; no fade sits between the hero and the product. */
+.snapshotGrid::before {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  inset: 0;
   background-image:
     linear-gradient(to right, rgba(23, 92, 211, .14) 1px, transparent 1px),
     linear-gradient(to bottom, rgba(23, 92, 211, .14) 1px, transparent 1px),
     radial-gradient(ellipse 50% 42% at 50% 0%, rgba(73, 139, 246, .14), transparent 78%);
   background-position: 65px 0, 0 0, 0 0;
   background-size: 93px 100%, 100% 32.31px, 100% 100%;
-  -webkit-mask-image: linear-gradient(
-    to bottom,
-    transparent 0,
-    rgba(0, 0, 0, .12) 24px,
-    rgba(0, 0, 0, .55) 72px,
-    #000 var(--snapshot-reveal-distance)
-  );
-  mask-image: linear-gradient(
-    to bottom,
-    transparent 0,
-    rgba(0, 0, 0, .12) 24px,
-    rgba(0, 0, 0, .55) 72px,
-    #000 var(--snapshot-reveal-distance)
-  );
+  pointer-events: none;
 }
 
 .dashboardFrame {
@@ -421,16 +422,22 @@
   top: 59.525px;
   left: 50%;
   width: 948px;
-  height: 600px;
+  height: 592.5px;
+  overflow: hidden;
+  border: 1px solid #e4e7ec;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow:
+    0 24px 64px -24px rgba(16, 24, 40, .24),
+    0 1px 2px rgba(16, 24, 40, .06);
   transform: translateX(-50%);
 }
 
-.dashboardFrame img {
+.dashboardFrame video {
   display: block;
   width: 100%;
   height: 100%;
-  max-width: none;
-  object-fit: contain;
+  object-fit: cover;
 }
 
 .snapshotFade {
@@ -716,7 +723,6 @@
 .featuresBody {
   display: flex;
   width: 1157px;
-  height: 400px;
   align-items: flex-start;
   justify-content: space-between;
   margin-top: 80px;
@@ -725,19 +731,35 @@
 .featureList {
   display: flex;
   width: 351.22px;
-  height: 374px;
   flex-direction: column;
   align-items: flex-start;
 }
 
-.featureActive {
-  width: 351.22px;
-  height: 132px;
+.featureItem {
+  position: relative;
+  width: 100%;
+  padding: 24px 0;
   border-bottom: 1px solid #e4e7ec;
 }
 
-.featureActive h3,
+.featureItem:first-child {
+  padding-top: 0;
+}
+
+/* Sits exactly over the item's 1px rule, so the divider geometry is unchanged.
+   --feature-progress (0 to 1) is written each frame by FeatureAccordion. */
+.featureProgress {
+  position: absolute;
+  inset: auto 0 -1px;
+  height: 1px;
+  background: var(--enta-blue);
+  transform: scaleX(var(--feature-progress, 0));
+  transform-origin: left center;
+  will-change: transform;
+}
+
 .featureLabel {
+  margin: 0;
   color: var(--enta-ink);
   font-size: 16px;
   font-weight: 600;
@@ -745,22 +767,54 @@
   letter-spacing: -.16px;
 }
 
-.featureActive p {
-  width: 351.22px;
-  margin-top: 12px;
+.featureTrigger {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  letter-spacing: inherit;
+  text-align: left;
+}
+
+/* 0fr -> 1fr animates the row without measuring the copy. */
+.featurePanel {
+  display: grid;
+  width: 100%;
+  grid-template-rows: 0fr;
+  overflow: hidden;
+  visibility: hidden;
+  transition:
+    grid-template-rows 250ms ease,
+    visibility 250ms ease;
+}
+
+.featurePanelOpen {
+  grid-template-rows: 1fr;
+  visibility: visible;
+}
+
+.featurePanelInner {
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 250ms ease;
+}
+
+.featurePanelOpen .featurePanelInner {
+  opacity: 1;
+}
+
+/* overflow: hidden on the wrapper stops this margin collapsing out of it. */
+.featurePanel p {
+  margin: 12px 0 0;
   color: var(--enta-muted);
   font-size: 16px;
   font-weight: 400;
   line-height: 24px;
   letter-spacing: -.16px;
-}
-
-.featureLabel {
-  display: flex;
-  width: 351.22px;
-  height: 72px;
-  align-items: center;
-  border-bottom: 1px solid #e4e7ec;
 }
 
 .featureList .primaryButton {
@@ -782,17 +836,30 @@
   background: #f7f7f9;
 }
 
-.featureVisual img {
+/* Every layer fills the same frame. The gradient sits under the loops, so an
+   item whose loop has not been rendered yet still shows something. */
+.featureVisual img,
+.featureVisualLayer {
+  position: absolute;
   display: block;
   width: 100%;
   height: 100%;
   max-width: none;
+  inset: 0;
   object-fit: cover;
+}
+
+.featureVisualLayer {
+  opacity: 0;
+  transition: opacity 250ms ease;
+}
+
+.featureVisualLayerActive {
+  opacity: 1;
 }
 
 /* Savings */
 .savingsSection {
-  height: 1083px;
   padding: 140px 142px;
   background: #fff;
 }
@@ -800,239 +867,186 @@
 .savingsInner {
   width: 100%;
   max-width: 1156px;
-  height: 803px;
   margin: 0 auto;
 }
 
 .savingsColumns {
   display: flex;
-  width: 1156px;
-  height: 661px;
+  width: 100%;
   align-items: flex-start;
-  justify-content: space-between;
+  gap: 96px;
 }
 
 .savingsSetup {
-  width: 478px;
-  height: 541px;
-}
-
-.savingsSetup .sectionHeading {
-  width: 478px;
-  height: 181px;
-}
-
-.savingsSetup .sectionHeading h2 {
-  width: 478px;
+  width: 420px;
 }
 
 .savingsControls {
   display: flex;
-  width: 349px;
-  height: 268px;
+  width: 100%;
+  /* Stacked, the column runs the page width; the controls stay reading-width. */
+  max-width: 420px;
   flex-direction: column;
-  gap: 24px;
+  gap: 40px;
   margin-top: 64px;
 }
 
 .fieldGroup {
   display: flex;
-  width: 349px;
+  width: 100%;
   flex-direction: column;
   align-items: flex-start;
-  gap: 6px;
+  gap: 12px;
 }
 
 .fieldLabel {
-  color: #5c5e63;
-  font-family: Inter, Arial, sans-serif;
-  font-size: 12px;
+  color: var(--enta-ink);
+  font-size: 16px;
   font-weight: 500;
-  line-height: 15.6px;
+  line-height: 24px;
 }
 
-.currencyTabs {
-  display: flex;
-  width: 349px;
-  height: 44px;
-  align-items: center;
-  gap: 4px;
-  padding: 4px;
-  border: 1px solid #e4e7ec;
-  border-radius: 10px;
-  background: #f9fafb;
-}
-
-.currencyTabs button {
-  display: inline-flex;
-  height: 36px;
-  flex: 1 1 0;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 8px 8px;
-  border: 0;
-  border-radius: 6px;
-  background: transparent;
-  color: #667085;
-  cursor: default;
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 20px;
-  transition:
-    color 200ms linear,
-    background-color 200ms linear,
-    box-shadow 200ms linear;
-}
-
-.currencyFlag {
-  position: relative;
-  display: block;
-  width: 20px;
-  height: 20px;
-  flex: 0 0 auto;
-  overflow: hidden;
-  border-radius: 50%;
-  box-shadow: inset 0 0 0 1px rgba(16, 24, 40, .04);
-}
-
-.currencyFlagNigeria {
-  background: url("/enta-website/enta-landing/currency-ngn.png") center / cover no-repeat;
-}
-
-.currencyFlagEgypt {
-  background: url("/enta-website/enta-landing/currency-egp.png") center / cover no-repeat;
-}
-
-.currencyFlagGhana {
-  background: url("/enta-website/enta-landing/currency-ghs.png") center / cover no-repeat;
-}
-
-.currencyFlagKenya {
-  background: url("/enta-website/enta-landing/currency-kes.png") center / cover no-repeat;
-}
-
-.currencyTabs .currencyActive {
-  background: #fff;
-  color: #1849a9;
-  font-weight: 700;
-  box-shadow:
-    0 1px 2px rgba(16, 24, 40, .06),
-    0 1px 3px rgba(16, 24, 40, .1);
-}
-
-.currencyTabs button:not(.currencyActive):hover {
-  background: #fff;
-  color: #344054;
-  box-shadow:
-    0 1px 2px rgba(16, 24, 40, .06),
-    0 1px 3px rgba(16, 24, 40, .1);
-}
-
-.currencyTabs button:focus-visible {
-  outline: 2px solid #fff;
-  box-shadow: 0 0 0 4px #1570ef;
+/* The years figure changes under the caret; tabular digits stop the label jiggling. */
+.fieldLabelValue {
+  font-variant-numeric: tabular-nums;
 }
 
 .amountField {
   display: flex;
-  width: 349px;
-  height: 52px;
+  width: 100%;
+  height: 60px;
   align-items: center;
-  padding: 16px 14px;
-  border: 1px solid #e4e7ec;
-  border-radius: 8px;
+  padding: 0 20px;
+  border: 1px solid #cdd3db;
+  border-radius: 16px;
   background: #fff;
-  color: #344054;
-  font-size: 18px;
-  font-weight: 600;
-  line-height: 20px;
 }
 
-.timeSlider {
-  position: relative;
-  width: 349px;
-  height: 56px;
+.currencySelect {
+  width: 96px;
+  height: 100%;
+  flex: 0 0 auto;
+  padding: 0 26px 0 28px;
+  border: 0;
+  border-right: 1px solid #e4e7ec;
+  border-radius: 0;
+  appearance: none;
+  background-color: transparent;
+  background-image: var(--currency-flag), url("/enta-website/enta-landing/savings-caret-down.svg");
+  background-position: left center, right 6px center;
+  background-repeat: no-repeat;
+  background-size: 20px 20px, 16px 16px;
+  color: var(--enta-ink);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 24px;
 }
 
-.sliderTrack {
-  position: absolute;
-  top: 8px;
-  left: 0;
-  width: 349px;
-  height: 8px;
+.amountInput {
+  width: 100%;
+  min-width: 0;
+  height: 100%;
+  flex: 1 1 auto;
+  padding: 0 0 0 16px;
+  border: 0;
+  background: transparent;
+  color: var(--enta-ink);
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 24px;
+}
+
+/* Both children fill the field's content box, so the global +3px offset
+   would throw their rings outside the rounded field and across the
+   divider. Indicate the field as one control instead. */
+.amountField:has(:focus-visible) {
+  outline: 2px solid #175cd3;
+  outline-offset: 3px;
+}
+
+.currencySelect:focus-visible,
+.amountInput:focus-visible {
+  outline: none;
+}
+
+@supports not selector(:has(:focus-visible)) {
+  .currencySelect:focus-visible,
+  .amountInput:focus-visible {
+    outline: 2px solid #175cd3;
+    outline-offset: -3px;
+  }
+}
+
+.yearsRange {
+  display: block;
+  width: 100%;
+  height: 18px;
+  margin: 0;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.yearsRange::-webkit-slider-runnable-track {
+  height: 2px;
   border-radius: 9999px;
   background: #e4e7ec;
 }
 
-.sliderProgress {
-  position: absolute;
-  inset: 0 auto 0 0;
-  width: 40%;
-  border-radius: inherit;
-  background: #175cd3;
-}
-
-.sliderHandle {
-  position: absolute;
-  top: 50%;
-  left: 40%;
-  width: 24px;
-  height: 24px;
-  border: 1.5px solid #175cd3;
+.yearsRange::-webkit-slider-thumb {
+  width: 18px;
+  height: 18px;
+  margin-top: -8px;
+  appearance: none;
+  border: 0;
   border-radius: 50%;
-  background: #194185;
-  box-shadow:
-    0 4px 8px -2px rgba(16, 24, 40, .1),
-    0 2px 4px -2px rgba(16, 24, 40, .06);
-  transform: translate(-50%, -50%);
+  background: var(--enta-ink);
+  transition: transform 150ms ease;
 }
 
-.sliderLabels {
-  position: absolute;
-  top: 32px;
-  left: 0;
-  display: flex;
-  width: 346px;
-  align-items: center;
-  justify-content: space-between;
-  color: #475467;
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 24px;
+.yearsRange:hover::-webkit-slider-thumb {
+  transform: scale(1.1);
 }
 
-.sliderLabels .sliderLabelActive {
-  color: var(--enta-ink);
-  font-weight: 600;
+.yearsRange::-moz-range-track {
+  height: 2px;
+  border-radius: 9999px;
+  background: #e4e7ec;
 }
 
-.savingsResults {
-  width: 504px;
-  height: 661px;
-  padding: 40px;
-  border-radius: 16px;
-  background: #f9fafb;
+.yearsRange::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--enta-ink);
+  transition: transform 150ms ease;
 }
 
-.savingsResults header {
-  display: flex;
-  width: 424px;
-  height: 60px;
-  flex-direction: column;
-  gap: 12px;
+.yearsRange:hover::-moz-range-thumb {
+  transform: scale(1.1);
 }
 
-.savingsResults header h3 {
-  color: #344054;
-  font-size: 20px;
-  font-weight: 700;
-  line-height: 24px;
-  letter-spacing: -.2px;
+/* The drawn thumb is 18px, so the drag band was 18px. Grow the box, not the
+   paint: the negative block margin keeps the 40px .savingsControls pitch and
+   the hairline and thumb render exactly where they did. */
+@media (hover: none) and (pointer: coarse) {
+  .yearsRange {
+    height: 44px;
+    margin: -13px 0;
+  }
 }
 
-.savingsResults header p {
-  color: #475467;
+.savingsOutcome {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.savingsSummary {
+  color: var(--enta-muted);
   font-size: 14px;
   font-weight: 400;
   line-height: 24px;
@@ -1041,23 +1055,25 @@
 
 .savingsRows {
   display: grid;
-  width: 424px;
-  height: 424px;
-  grid-template-rows: repeat(5, 40px);
-  row-gap: 56px;
-  margin-top: 40px;
+  grid-template-columns: minmax(0, 1fr);
+  width: 100%;
+  gap: 40px;
+  margin: 24px 0 40px;
 }
 
 .savingsRow {
-  width: 424px;
-  height: 40px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  width: 100%;
+  gap: 12px;
 }
 
 .savingsRowTop {
   display: flex;
-  width: 424px;
+  width: 100%;
   align-items: center;
   justify-content: space-between;
+  gap: 12px;
 }
 
 .savingsRowLabel {
@@ -1065,38 +1081,27 @@
   min-width: 0;
   align-items: center;
   gap: 8px;
-  color: #475467;
   white-space: nowrap;
 }
 
-.savingsRowLabel > img,
-.calculatorCoin {
+/* A coin for the asset, or the picked currency's flag on the baseline row. */
+.savingsRowIcon {
+  display: block;
+  flex: 0 0 auto;
   width: 24px;
   height: 24px;
-  flex: 0 0 auto;
 }
 
-.calculatorCoin {
-  display: inline-grid;
-  place-items: center;
+.savingsRowIcon img {
+  display: block;
+  width: 100%;
+  height: 100%;
   border-radius: 50%;
-  color: #fff;
-  font-family: Arial, sans-serif;
-  font-size: 15px;
-  font-weight: 700;
-  line-height: 1;
-}
-
-.calculatorCoinBitcoin {
-  background: #f7931a;
-}
-
-.calculatorCoinNaira {
-  background: #286b2b;
-  font-size: 14px;
+  object-fit: cover;
 }
 
 .savingsRowLabel strong {
+  color: var(--enta-ink);
   font-size: 16px;
   font-weight: 700;
   line-height: 24px;
@@ -1105,80 +1110,73 @@
 
 .savingsQualifier {
   margin-left: -4px;
-  font-size: 15px;
-  font-weight: 300;
+  color: var(--enta-muted);
+  font-size: 16px;
+  font-weight: 400;
   line-height: 24px;
 }
 
-.savingsRowLabel em {
-  margin-left: 0;
-  padding: 2px 8px;
+.savingsBadge {
+  flex: 0 1 auto;
+  overflow: hidden;
+  padding: 6px 12px;
   border-radius: 9999px;
-  background: #e4e7ec;
-  color: #344054;
-  font-size: 12px;
+  background: #f2f4f7;
+  color: var(--enta-ink);
+  font-size: 14px;
   font-style: normal;
   font-weight: 500;
   line-height: 18px;
+  text-overflow: ellipsis;
 }
 
-.savingsRowTop > b {
-  color: #475467;
+.savingsValue {
+  flex: 0 0 auto;
+  color: var(--enta-ink);
   font-size: 16px;
   font-weight: 700;
   line-height: 24px;
   letter-spacing: -.2px;
+  white-space: nowrap;
 }
 
-.savingsRule {
-  position: relative;
-  width: 424px;
-  height: 16px;
-  padding-top: 15px;
+/* No track behind the bar: it sits straight on the white of the section. */
+.savingsBar {
+  width: 100%;
+  height: 20px;
 }
 
-.savingsRule::before {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  border-top: 1px dotted color-mix(in srgb, var(--savings-color) 58%, transparent);
-  content: "";
-}
-
-.savingsRule span {
-  position: absolute;
-  bottom: -2px;
-  left: 0;
+.savingsBar span {
+  display: block;
   width: var(--savings-progress);
-  height: 5px;
-  border-radius: 999px;
+  min-width: 20px;
+  height: 100%;
+  border-radius: 9999px;
   background: var(--savings-color);
+  transition: width 400ms ease;
 }
 
-.savingsDisclaimer {
-  display: flex;
-  width: 424px;
-  height: 17px;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: 40px;
-  color: #475467;
-  font-size: 10px;
+.savingsNote {
+  max-width: 480px;
+  color: var(--enta-muted);
+  font-size: 12px;
   font-weight: 400;
-  line-height: 14px;
+  line-height: 1.5;
 }
 
-.savingsDisclaimer > span:last-child {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 
 .savingsCta {
   display: flex;
-  width: 1156px;
-  height: 118px;
+  width: 100%;
+  min-height: 118px;
   align-items: flex-start;
   justify-content: space-between;
   margin-top: 24px;
@@ -1188,13 +1186,13 @@
 
 .savingsCta > div {
   display: flex;
-  width: 602px;
+  max-width: 602px;
   flex-direction: column;
   gap: 10px;
 }
 
 .savingsCta h3 {
-  width: 451px;
+  max-width: 451px;
   color: var(--enta-ink);
   font-size: 20px;
   font-weight: 700;
@@ -1217,8 +1215,12 @@
 }
 
 /* Customer reviews */
+.reviewsFrame {
+  container-type: inline-size;
+}
+
 .reviewsSection {
-  --reviews-gutter: max(142px, calc((100vw - 1156px) / 2));
+  --reviews-gutter: max(142px, calc((100cqw - 1156px) / 2));
   --reviews-card-width: 400px;
   --reviews-gap: 20px;
   padding: 120px var(--reviews-gutter);
@@ -1400,7 +1402,7 @@
 @media (max-width: 767px) {
   .reviewsSection {
     --reviews-gutter: 20px;
-    --reviews-card-width: min(320px, calc(100vw - 72px));
+    --reviews-card-width: min(320px, calc(100cqw - 72px));
     padding: 80px var(--reviews-gutter);
   }
 
@@ -1742,32 +1744,35 @@
 .logoBusiness small {
   position: absolute;
   top: 20px;
-  left: 25px;
-  color: #d0d5dd;
-  font-size: 5px;
-  font-weight: 600;
-  letter-spacing: .8px;
+  left: 28px;
+  color: #94969c;
+  font-size: 9px;
+  font-weight: 400;
+  line-height: 13.5px;
+  letter-spacing: 0;
 }
 
 .footerBrand > p {
-  width: 184px;
-  margin-top: 26px;
+  width: 178px;
+  margin-top: 24px;
   color: #98a2b3;
   font-size: 14px;
   line-height: 20px;
+  opacity: .9;
 }
 
 .footerBrand > a {
   display: inline-block;
   margin-top: 24px;
   font-size: 14px;
-  font-weight: 500;
-  line-height: 20px;
+  font-weight: 600;
+  line-height: 24px;
+  opacity: .9;
 }
 
 .footerLinks {
   display: flex;
-  width: 384px;
+  width: 608px;
   align-items: flex-start;
   gap: 64px;
 }
@@ -1781,18 +1786,20 @@
 }
 
 .footerColumn h3 {
-  color: #667085;
+  color: #98a2b3;
   font-size: 12px;
   font-weight: 400;
   line-height: 18px;
 }
 
-.footerColumn > a {
+.footerColumn > a,
+.footerColumn > span {
   display: inline-flex;
   align-items: center;
   gap: 4px;
+  color: #fff;
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 600;
   line-height: 20px;
   transition: color 200ms ease;
 }
@@ -1802,15 +1809,65 @@
   color: #84adff;
 }
 
+.footerColumn > a:focus-visible,
+.footerBrand > a:focus-visible,
+.socialLinks a:focus-visible {
+  border-radius: 4px;
+  outline: 2px solid #84adff;
+  outline-offset: 3px;
+}
+
+.socialLinks {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+
+.socialLinks a {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(31, 35, 47, .4);
+  color: rgba(255, 255, 255, .8);
+  transition:
+    background-color 200ms ease,
+    color 200ms ease,
+    transform 200ms ease;
+}
+
+.socialLinks a:hover {
+  background-color: rgba(31, 35, 47, .9);
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+.socialLinks a:active {
+  transform: translateY(0);
+}
 
 .footerBottom {
   display: flex;
   width: 1160px;
   align-items: center;
-  margin-top: 44px;
-  color: #667085;
+  justify-content: space-between;
+  margin-top: 40px;
+  color: #475467;
   font-size: 12px;
   line-height: 18px;
+}
+
+.footerBottom > div {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.footerBottom i {
+  width: 1px;
+  height: 16px;
+  background: #344054;
 }
 
 
@@ -1848,7 +1905,7 @@
     top: 8.19%;
     width: 75%;
     height: auto;
-    aspect-ratio: 948 / 600;
+    aspect-ratio: 16 / 10;
   }
 
   .logoSection {
@@ -1888,8 +1945,6 @@
   }
 
   .featuresBody,
-  .savingsColumns,
-  .savingsCta,
   .securityHeading,
   .securityPanel,
   .faqList,
@@ -1956,6 +2011,27 @@
   }
 }
 
+/* Both savings columns give ground here; fixed widths made the results column
+   absorb every pixel the viewport lost. */
+@media (min-width: 992px) and (max-width: 1199px) {
+  .savingsSetup {
+    width: auto;
+    flex: 0 1 420px;
+  }
+
+  /* The hard 420px on the paragraph was this column's automatic minimum, so
+     the setup column could never give any ground back. */
+  .savingsSetup .sectionHeading p {
+    width: 100%;
+    max-width: 420px;
+  }
+
+  .savingsOutcome {
+    width: auto;
+    flex: 1 1 520px;
+  }
+}
+
 @media (max-width: 991px) {
   .navRail {
     padding-right: 20px;
@@ -2018,28 +2094,19 @@
 
   .featuresSection .sectionHeading,
   .featuresSection .sectionHeading h2,
-  .savingsSetup,
-  .savingsSetup .sectionHeading,
-  .savingsSetup .sectionHeading h2 {
+  .savingsSetup {
     width: 100%;
     height: auto;
   }
 
   .featuresBody {
     width: 100%;
-    height: auto;
     flex-direction: column;
     gap: 56px;
     margin-top: 64px;
   }
 
   .featureList {
-    width: 100%;
-  }
-
-  .featureActive,
-  .featureActive p,
-  .featureLabel {
     width: 100%;
   }
 
@@ -2051,21 +2118,20 @@
   }
 
   .savingsColumns {
-    height: auto;
     flex-direction: column;
     gap: 64px;
   }
 
-  .savingsSetup {
-    height: auto;
+  .savingsOutcome {
+    width: 100%;
   }
 
-  .savingsResults {
-    align-self: center;
+  /* Stacked columns: the disclaimer runs the full width of its column. */
+  .savingsNote {
+    max-width: none;
   }
 
   .savingsCta {
-    height: auto;
     margin-top: 64px;
   }
 
@@ -2117,8 +2183,8 @@
 
 @media (max-width: 809px) {
   .logoSection {
-    height: 80px;
-    padding: 16px 0;
+    height: 64px;
+    padding: 8px 0;
   }
 
   .logoWindow {
@@ -2357,11 +2423,7 @@
     top: 56px;
     width: calc(100% - 32px);
     height: auto;
-    aspect-ratio: 948 / 600;
-  }
-
-  .dashboardFrame img {
-    height: 100%;
+    aspect-ratio: 16 / 10;
   }
 
   .snapshotFade {
@@ -2414,66 +2476,28 @@
     min-height: 260px;
   }
 
-  .savingsControls,
-  .fieldGroup,
-  .currencyTabs,
-  .amountField,
-  .timeSlider,
-  .sliderTrack {
-    width: 100%;
+  .amountField {
+    padding: 0 16px;
   }
 
-  .savingsControls {
-    height: auto;
+  .currencySelect {
+    width: 90px;
+    padding-right: 20px;
+    padding-left: 26px;
+    background-position: left center, right 4px center;
+    background-size: 18px 18px, 14px 14px;
   }
 
-  .sliderLabels {
-    width: 100%;
-  }
-
-  .currencyTabs {
-    gap: 2px;
-  }
-
-  .currencyTabs button {
-    gap: 4px;
-    padding-right: 4px;
-    padding-left: 4px;
-    font-size: 12px;
-  }
-
-  .currencyFlag {
-    width: 16px;
-    height: 16px;
-  }
-
-  .savingsResults {
-    width: 100%;
-    height: auto;
-    padding: 28px 20px;
-  }
-
-  .savingsResults header,
-  .savingsRows,
-  .savingsRow,
-  .savingsRowTop,
-  .savingsRule,
-  .savingsDisclaimer {
-    width: 100%;
-  }
-
-  .savingsResults header {
-    height: auto;
+  .amountInput {
+    padding-left: 12px;
   }
 
   .savingsRows {
-    height: auto;
-    grid-template-rows: none;
-    row-gap: 36px;
+    gap: 32px;
   }
 
-  .savingsRow {
-    height: 48px;
+  .savingsRowTop {
+    gap: 8px;
   }
 
   .savingsRowLabel {
@@ -2481,28 +2505,28 @@
   }
 
   .savingsRowLabel strong {
-    font-size: 13px;
+    font-size: 14px;
   }
 
   .savingsQualifier {
-    display: none;
-  }
-
-  .savingsRowLabel em {
-    padding: 2px 6px;
-    font-size: 10px;
-  }
-
-  .savingsRowTop > b {
     font-size: 13px;
   }
 
-  .savingsDisclaimer {
-    height: auto;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-    margin-top: 32px;
+  .savingsBadge {
+    padding: 4px 8px;
+    font-size: 11px;
+  }
+
+  .savingsValue {
+    font-size: 14px;
+  }
+
+  .savingsBar {
+    height: 16px;
+  }
+
+  .savingsBar span {
+    min-width: 16px;
   }
 
   .savingsCta {
@@ -2513,6 +2537,7 @@
   .savingsCta > div,
   .savingsCta h3 {
     width: 100%;
+    max-width: none;
   }
 
   .securitySection {
@@ -2629,6 +2654,24 @@
     top: 160px;
   }
 
+  .socialLinks a {
+    width: 38px;
+    height: 38px;
+  }
+
+}
+
+@media (max-width: 383px) {
+  /* The pill is the only item in the label row that can shrink, so below about
+     344px it would ellipsis the currency away. Drop the suffix instead: the
+     picker and the baseline row still name the currency. */
+  .savingsBadgeSuffix {
+    display: none;
+  }
+
+  .footerLinks {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -2647,6 +2690,32 @@
   }
 
   .heroMedia video {
+    display: none;
+  }
+
+  .yearsRange::-webkit-slider-thumb {
+    transition: none !important;
+  }
+
+  .yearsRange::-moz-range-thumb {
+    transition: none !important;
+  }
+
+  .savingsBar span {
+    transition: none !important;
+  }
+
+  .featurePanel,
+  .featurePanelInner {
+    transition: none !important;
+  }
+
+  .featureVisualLayer {
+    transition: none !important;
+  }
+
+  /* No autoplay under reduced motion, so the fill never has anything to show. */
+  .featureProgress {
     display: none;
   }
 

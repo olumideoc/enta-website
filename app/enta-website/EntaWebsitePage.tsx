@@ -1,15 +1,21 @@
 "use client";
 
 import Image from "next/image";
-import { type CSSProperties, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   audienceCards,
   faqQuestions,
   footerColumns,
+  footerSocialLinks,
   logoStrip,
-  savingsRows,
 } from "./entaWebsiteData";
 import { CustomerReviews } from "./CustomerReviews";
+import { DashboardLoop } from "./DashboardLoop";
+import { DEFAULT_FEATURE_ID, FeatureAccordion } from "./FeatureAccordion";
+import { FeatureVisual } from "./FeatureVisual";
+import { FooterArrowIcon } from "./FooterArrowIcon";
+import { FooterSocialIcon } from "./FooterSocialIcon";
+import { SavingsCalculator } from "./savings/SavingsCalculator.tsx";
 import styles from "./enta-website.module.css";
 
 const cx = (...values: Array<string | false | null | undefined>) =>
@@ -68,6 +74,11 @@ export function EntaWebsitePage() {
   const [scrolled, setScrolled] = useState(false);
   const [darkNav, setDarkNav] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  // The accordion owns which item is open; the page only relays it to the
+  // visual so the loop beside the list always matches the open copy.
+  const [activeFeatureId, setActiveFeatureId] = useState<string | null>(
+    DEFAULT_FEATURE_ID,
+  );
 
   useEffect(() => {
     let frame = 0;
@@ -341,14 +352,7 @@ export function EntaWebsitePage() {
         <section className={styles.featuredSection} aria-label="Enta product and partners">
           <div className={styles.snapshotGrid}>
             <div className={styles.dashboardFrame}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src="/enta-website/enta-landing/dashboard-visible.png"
-                alt="Enta dashboard showing balances, transactions, and a deposit panel"
-                width={948}
-                height={600}
-                fetchPriority="high"
-              />
+              <DashboardLoop />
             </div>
             <div className={styles.snapshotFade} />
           </div>
@@ -435,27 +439,14 @@ export function EntaWebsitePage() {
 
             <div className={styles.featuresBody}>
               <div className={styles.featureList} data-reveal>
-                <div className={styles.featureActive}>
-                  <h3>Send</h3>
-                  <p>
-                    Across borders in minutes, at the rate you were shown — checked
-                    before it goes: the address, the amount, anything unusual.
-                  </p>
-                </div>
-                <div className={styles.featureLabel}>Buy</div>
-                <div className={styles.featureLabel}>Hold</div>
+                <FeatureAccordion onActiveChange={setActiveFeatureId} />
                 <a className={styles.primaryButton} href={signupUrl}>
                   Get started
                 </a>
               </div>
 
               <div className={styles.featureVisual} aria-hidden="true" data-reveal>
-                <Image
-                  src="/enta-website/enta-landing/feature-visual.png"
-                  alt=""
-                  width={700}
-                  height={400}
-                />
+                <FeatureVisual activeId={activeFeatureId} />
               </div>
             </div>
           </div>
@@ -463,150 +454,7 @@ export function EntaWebsitePage() {
 
         <section className={styles.savingsSection}>
           <div className={styles.savingsInner}>
-            <div className={styles.savingsColumns}>
-              <div className={styles.savingsSetup} data-reveal>
-                <div className={styles.sectionHeading}>
-                  <h2>What could your savings be worth today?</h2>
-                  <p>Compare up to six years across different ways of holding value.</p>
-                </div>
-
-                <div className={styles.savingsControls}>
-                  <div className={styles.fieldGroup}>
-                    <span className={styles.fieldLabel}>Starting currency</span>
-                    <div className={styles.currencyTabs} aria-label="Starting currency">
-                      <button className={styles.currencyActive} type="button" aria-pressed="true">
-                        <span
-                          className={cx(styles.currencyFlag, styles.currencyFlagNigeria)}
-                          aria-hidden="true"
-                        />
-                        NGN
-                      </button>
-                      <button type="button" aria-pressed="false">
-                        <span
-                          className={cx(styles.currencyFlag, styles.currencyFlagEgypt)}
-                          aria-hidden="true"
-                        />
-                        EGP
-                      </button>
-                      <button type="button" aria-pressed="false">
-                        <span
-                          className={cx(styles.currencyFlag, styles.currencyFlagGhana)}
-                          aria-hidden="true"
-                        />
-                        GHS
-                      </button>
-                      <button type="button" aria-pressed="false">
-                        <span
-                          className={cx(styles.currencyFlag, styles.currencyFlagKenya)}
-                          aria-hidden="true"
-                        />
-                        KES
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className={styles.fieldGroup}>
-                    <span className={styles.fieldLabel}>Amount saved each month</span>
-                    <div className={styles.amountField}>₦600,000</div>
-                  </div>
-
-                  <div className={styles.fieldGroup}>
-                    <span className={styles.fieldLabel}>Time held</span>
-                    <div className={styles.timeSlider}>
-                      <div className={styles.sliderTrack}>
-                        <span className={styles.sliderProgress} />
-                        <span className={styles.sliderHandle} />
-                      </div>
-                      <div className={styles.sliderLabels}>
-                        {["1 yr", "2 yrs", "3 yrs", "4 yrs", "5 yrs", "6 yrs"].map(
-                          (label) => (
-                            <span
-                              className={label === "3 yrs" ? styles.sliderLabelActive : ""}
-                              key={label}
-                            >
-                              {label}
-                            </span>
-                          ),
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <article className={styles.savingsResults} data-reveal>
-                <header>
-                  <h3>Historical value of saving ₦600,000 monthly</h3>
-                  <p>36 monthly deposits · 2023–2026 · ₦21.6M contributed</p>
-                </header>
-
-                <div className={styles.savingsRows}>
-                  {savingsRows.map((row) => (
-                    <div
-                      className={styles.savingsRow}
-                      key={row.label}
-                      style={
-                        {
-                          "--savings-color": row.color,
-                          "--savings-progress": row.progress,
-                        } as CSSProperties
-                      }
-                    >
-                      <div className={styles.savingsRowTop}>
-                        <div className={styles.savingsRowLabel}>
-                          {row.label === "Held in Bitcoin" ? (
-                            <span
-                              className={cx(styles.calculatorCoin, styles.calculatorCoinBitcoin)}
-                              aria-hidden="true"
-                            >
-                              ₿
-                            </span>
-                          ) : row.label === "Held in Naira" ? (
-                            <span
-                              className={cx(styles.calculatorCoin, styles.calculatorCoinNaira)}
-                              aria-hidden="true"
-                            >
-                              ₦
-                            </span>
-                          ) : (
-                            <Image
-                              src={row.icon}
-                              alt=""
-                              width={24}
-                              height={24}
-                              loading="eager"
-                              unoptimized
-                            />
-                          )}
-                          <strong>{row.label}</strong>
-                          {"qualifier" in row && row.qualifier && (
-                            <span className={styles.savingsQualifier}>{row.qualifier}</span>
-                          )}
-                          <em>{row.badge}</em>
-                        </div>
-                        <b>{row.value}</b>
-                      </div>
-                      <div className={styles.savingsRule}>
-                        <span />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                <div className={styles.savingsDisclaimer}>
-                  <span>This is historical illustration, not a forecast.</span>
-                  <span>
-                    How this is calculated
-                    <Image
-                      src="/enta-website/enta-landing/savings-caret-down.svg"
-                      alt=""
-                      width={16}
-                      height={16}
-                    />
-                  </span>
-                </div>
-              </article>
-            </div>
+            <SavingsCalculator />
 
             <div className={styles.savingsCta} data-reveal>
               <div>
@@ -729,7 +577,7 @@ export function EntaWebsitePage() {
         <div className={styles.footerInner}>
           <div className={styles.footerMain}>
             <div className={styles.footerBrand}>
-              <EntaLogo label="Enta Business" business />
+              <EntaLogo label="Enta" />
               <p>Money that works everywhere you do</p>
               <a href="mailto:hello@entashiga.io">hello@entashiga.io</a>
             </div>
@@ -738,19 +586,57 @@ export function EntaWebsitePage() {
               {footerColumns.map((column) => (
                 <div className={styles.footerColumn} key={column.title}>
                   <h3>{column.title}</h3>
-                  {column.links.map((link) => (
-                    <a href={link.href} key={link.label}>
-                      {link.label}
-                    </a>
-                  ))}
+                  {column.links.map((link) => {
+                    const isExternal = "external" in link && link.external;
+                    const content = (
+                      <>
+                        {link.label}
+                        {isExternal && <FooterArrowIcon />}
+                      </>
+                    );
+
+                    return link.href ? (
+                      <a
+                        href={link.href}
+                        key={link.label}
+                        target={isExternal ? "_blank" : undefined}
+                        rel={isExternal ? "noopener noreferrer" : undefined}
+                      >
+                        {content}
+                      </a>
+                    ) : (
+                      <span key={link.label}>{content}</span>
+                    );
+                  })}
                 </div>
               ))}
 
+              <div className={styles.footerColumn}>
+                <h3>Connect</h3>
+                <div className={styles.socialLinks}>
+                  {footerSocialLinks.map((social) => (
+                    <a
+                      href={social.href}
+                      aria-label={social.label}
+                      key={social.label}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <FooterSocialIcon name={social.icon} />
+                    </a>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
 
           <div className={styles.footerBottom}>
             <span>©2026 Enta</span>
+            <div aria-label="Legal information">
+              <span>Terms of Use</span>
+              <i aria-hidden="true" />
+              <span>Privacy Policy</span>
+            </div>
           </div>
         </div>
       </footer>
