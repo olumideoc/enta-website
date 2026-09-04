@@ -1,0 +1,458 @@
+/*
+  Helium design tokens used by this page.
+
+  The hero and the tab section are the two bands this page paints itself, and
+  every colour in them reads from one of the custom properties below. The tab
+  section's own markup is the shared ../PillTabs; this file gives it a palette
+  through the --pill-* block further down. The light column is what Figma
+  frame 1:5054 specifies; the dark column is Helium's dark
+  theme, taken from @helium/tokens/src/generated/tokens.css ([data-theme='dark'],
+  line 682 on; the neutral theme further down that file is NOT the one Enta
+  uses).
+
+  custom property         Helium token          light      dark
+  -------------------------------------------------------------------
+  --ind-text-primary      text-primary          #101828    #f5f5f6
+  --ind-text-secondary    text-secondary        #344054    #cecfd2
+  --ind-text-tertiary     text-tertiary         #475467    #94969c
+  --ind-text-white        text-white            #ffffff    #ffffff
+  --ind-bg-primary        bg-primary            #ffffff    #0c111d
+  --ind-bg-secondary      bg-secondary          #f9fafb    #161b26
+  --ind-bg-brand-solid    bg-brand-solid        #175cd3    #175cd3
+  --ind-border-brand      border-brand          #1570ef    #2e90fa
+  --ind-border-primary    border-primary        #d0d5dd    #333741
+  --ind-border-secondary  border-secondary      #e4e7ec    #1f242f
+  --ind-border-brand-alt  border-brand_alt      #175cd3    #333741
+
+  Figma also paints a few colours that sit between two Helium steps. They keep
+  the frame's exact light value and take the dark value of the nearest token.
+
+  custom property         where                 nearest token    light      dark
+  ---------------------------------------------------------------------------------
+  --ind-copy              hero body copy        text-secondary   #31373d    #cecfd2
+  --ind-border-button     "Know more" border    border-primary   #cdd3db    #333741
+  --ind-bg-card           the tab card          bg-secondary     #f8f9fa    #161b26
+  --ind-bg-panel          the glow panel        bg-secondary     #f7f7f9    #161b26
+  --ind-card-title        security point title  text-primary     #151517    #f5f5f6
+  --ind-card-body         security point body   text-tertiary    #535361    #94969c
+  --ind-tile-face         the 64px icon face    bg-tertiary      #ffffff    #1f242f
+  --ind-tile-wrap         the 76px icon halo    (raw alpha)      1d1d20/5%  fff/6%
+
+  --ind-hero-veil is the pair of washes over the sky behind the hero. It is not
+  a Helium colour: it is white in the light theme and bg-primary (#0c111d) in
+  the dark one, so the hero copy keeps its contrast either way. The security
+  page's hero uses the same pair.
+
+  Not tokenised on purpose: the green check beside each bullet is a two-tone
+  exported asset (its #079455 disc is bg-success-solid, which Helium keeps
+  identical in both themes), and the colour wheel behind each panel is a fixed
+  pastel gradient the designer drew rather than a themed surface.
+
+  The three bands under the tab section are the landing page's components, and
+  they paint through the --band-* and --feature-* hooks their stylesheet
+  declares. The block at the bottom of this file points those hooks at the
+  tokens above, so the whole page follows one theme rather than going dark at
+  the top and staying light from the features band down. The landing page sets
+  none of the hooks and keeps the literals it always had.
+
+  The band artwork is the exception, the same way the colour wheel is: the
+  security grid decoration, the shield illustration and the FAQ chevron are
+  exported images with their own colours baked in.
+*/
+
+.individualPage {
+  --ind-text-primary: #101828;
+  --ind-text-secondary: #344054;
+  --ind-text-tertiary: #475467;
+  --ind-text-white: #fff;
+  --ind-bg-primary: #fff;
+  --ind-bg-secondary: #f9fafb;
+  --ind-bg-brand-solid: #175cd3;
+  --ind-border-brand: #1570ef;
+  --ind-border-primary: #d0d5dd;
+  --ind-border-secondary: #e4e7ec;
+  --ind-border-brand-alt: #175cd3;
+  --ind-copy: #31373d;
+  --ind-border-button: #cdd3db;
+  --ind-bg-card: #f8f9fa;
+  --ind-bg-panel: #f7f7f9;
+  --ind-card-title: #151517;
+  --ind-card-body: #535361;
+  --ind-tile-face: #fff;
+  --ind-tile-wrap: rgba(29, 29, 32, .05);
+  --ind-hero-veil:
+    radial-gradient(circle at 30% 46%, rgba(255, 255, 255, .58), rgba(255, 255, 255, .16) 58%),
+    linear-gradient(180deg, rgba(255, 255, 255, .28), rgba(255, 255, 255, .46));
+}
+
+:global([data-theme="dark"]) .individualPage {
+  color-scheme: dark;
+  --ind-text-primary: #f5f5f6;
+  --ind-text-secondary: #cecfd2;
+  --ind-text-tertiary: #94969c;
+  --ind-text-white: #fff;
+  --ind-bg-primary: #0c111d;
+  --ind-bg-secondary: #161b26;
+  --ind-bg-brand-solid: #175cd3;
+  --ind-border-brand: #2e90fa;
+  --ind-border-primary: #333741;
+  --ind-border-secondary: #1f242f;
+  --ind-border-brand-alt: #333741;
+  --ind-copy: #cecfd2;
+  --ind-border-button: #333741;
+  --ind-bg-card: #161b26;
+  --ind-bg-panel: #161b26;
+  --ind-card-title: #f5f5f6;
+  --ind-card-body: #94969c;
+  --ind-tile-face: #1f242f;
+  --ind-tile-wrap: rgba(255, 255, 255, .06);
+  --ind-hero-veil:
+    radial-gradient(circle at 30% 46%, rgba(12, 17, 29, .66), rgba(12, 17, 29, .3) 58%),
+    linear-gradient(180deg, rgba(12, 17, 29, .44), rgba(12, 17, 29, .66));
+}
+
+.skipLink {
+  position: fixed;
+  z-index: 500;
+  top: 12px;
+  left: 12px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: var(--ind-text-primary);
+  color: var(--ind-bg-primary) !important;
+  font-size: 14px;
+  font-weight: 600;
+  transform: translateY(-180%);
+  transition: transform 160ms cubic-bezier(.16, 1, .3, 1);
+}
+
+.skipLink:focus {
+  transform: translateY(0);
+}
+
+.main:focus {
+  outline: none;
+}
+
+.individualPage a:focus-visible,
+.individualPage button:focus-visible {
+  outline: 2px solid var(--ind-bg-brand-solid);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/*
+  Hero.
+
+  Figma draws a plain white hero starting under a 64px header band, with 80px of
+  padding inside it. The header on this site floats over the page instead, so
+  the top padding is 144px (64 + 80) and the sky loop the other secondary pages
+  use runs behind the copy. The fixed height holds Figma's 543px band even
+  though Plus Jakarta Sans measures its two paragraphs about 4px taller than
+  Figma's trimmed text boxes do.
+*/
+.hero {
+  position: relative;
+  height: 543px;
+  padding: 144px 142px 80px;
+  overflow: hidden;
+  background: var(--ind-bg-primary);
+  isolation: isolate;
+}
+
+.heroMedia {
+  position: absolute;
+  z-index: 0;
+  inset: 72px 0 0;
+  overflow: hidden;
+  background: #dceaf4 url("/enta-website/changelog/sky-poster.jpg") center 30% / cover no-repeat;
+  pointer-events: none;
+}
+
+.heroMedia::after {
+  position: absolute;
+  z-index: 1;
+  content: "";
+  inset: 0;
+  background: var(--ind-hero-veil);
+}
+
+.heroVideo {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 30%;
+}
+
+.heroRail {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  width: 735px;
+  max-width: 100%;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 40px;
+}
+
+.heroCopy {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 32px;
+}
+
+.heroCopy h1 {
+  width: 100%;
+  color: var(--ind-text-primary);
+  font-size: 64px;
+  font-weight: 700;
+  letter-spacing: -2px;
+  line-height: 1.1;
+  opacity: .9;
+}
+
+.heroCopy p {
+  width: 100%;
+  color: var(--ind-copy);
+  font-size: 20px;
+  font-weight: 500;
+  letter-spacing: -.3px;
+  line-height: 30px;
+}
+
+.heroActions {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+/* Figma's two buttons: 130x50 filled, 127x50 outlined, both 16px copy. */
+.heroActions > a {
+  width: 130px;
+  height: 50px;
+  min-height: 50px;
+  padding: 12px 16px;
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: -.2px;
+  line-height: 24px;
+}
+
+.heroActions > .secondaryButton {
+  width: 127px;
+}
+
+/*
+  Prefixed with the page class so the colour beats the landing stylesheet's
+  `.page a { color: inherit }`, which is a class plus a type and would otherwise
+  win over a bare class here.
+*/
+.individualPage .secondaryButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--ind-border-button);
+  border-radius: 12px;
+  background: transparent;
+  color: var(--ind-copy);
+  transition:
+    border-color 200ms ease,
+    background-color 200ms ease,
+    color 200ms ease,
+    transform 200ms ease;
+}
+
+.individualPage .secondaryButton:hover {
+  border-color: var(--ind-text-primary);
+  background: var(--ind-bg-primary);
+  color: var(--ind-text-primary);
+  transform: translateY(-1px);
+}
+
+/*
+  One account for every move your money makes.
+
+  The heading, the pills and the card inside this band are ../PillTabs, shared
+  with the business page, so their geometry lives in ../pill-tabs.module.css
+  and this page owns only the band around them plus the --pill-* block below.
+*/
+.waysSection {
+  padding: 80px 142px;
+  background: var(--ind-bg-primary);
+  scroll-margin-top: 88px;
+}
+
+/*
+  The shared pill tabs, in this page's palette.
+
+  Every value resolves to the literal the component already had as its
+  fallback, so the light rendering is unchanged; only the dark column moves.
+  The two lengths are the pair of measurements the individual frames differ
+  from the business ones on: a 550px heading, and the 224px offset that puts
+  every panel's bullet block 248px below the top of its copy column.
+*/
+.individualPage {
+  --pill-heading-width: 550px;
+  --pill-intro-min: 224px;
+  --pill-heading: var(--ind-text-primary);
+  --pill-idle-border: var(--ind-border-secondary);
+  --pill-idle-fg: var(--ind-text-tertiary);
+  --pill-idle-hover-border: var(--ind-border-primary);
+  --pill-idle-hover-fg: var(--ind-text-primary);
+  --pill-selected-border: var(--ind-border-brand);
+  --pill-selected-bg: var(--ind-bg-brand-solid);
+  --pill-selected-fg: var(--ind-text-white);
+  --pill-card-bg: var(--ind-bg-card);
+  --pill-panel-bg: var(--ind-bg-panel);
+  --pill-title: var(--ind-text-primary);
+  --pill-body: var(--ind-text-secondary);
+  --pill-point: var(--ind-text-secondary);
+  --pill-focus: var(--ind-bg-brand-solid);
+}
+
+/*
+  The three landing-page bands under the tab section.
+
+  Their stylesheet reads every colour it paints through a hook with its own
+  literal as the fallback, so the landing page is untouched and this block
+  points the hooks at the tokens at the top of this file. Exactly the mechanism
+  the security page uses on its recovery list; the same --feature-* and
+  --button-* names, plus the --band-* set the three bands added.
+
+  Declared on .main rather than on the page root so the header keeps the button
+  colours it has everywhere else on the site. Every value below resolves to the
+  landing page's own literal in the light theme, so the light rendering of the
+  three bands is unchanged; only the dark column moves.
+*/
+.main {
+  --band-bg-primary: var(--ind-bg-primary);
+  --band-bg-secondary: var(--ind-bg-secondary);
+  --band-heading: var(--ind-text-primary);
+  --band-body: var(--ind-copy);
+  --band-panel: var(--ind-bg-panel);
+  --band-card: var(--ind-bg-card);
+  --band-card-title: var(--ind-card-title);
+  --band-card-body: var(--ind-card-body);
+  --band-tile-wrap: var(--ind-tile-wrap);
+  --band-tile-face: var(--ind-tile-face);
+  --band-rule: var(--ind-border-secondary);
+  --feature-rule: var(--ind-border-secondary);
+  --feature-title: var(--ind-text-primary);
+  --feature-body: var(--ind-text-tertiary);
+  --feature-accent: var(--ind-bg-brand-solid);
+  --button-border: var(--ind-border-brand-alt);
+  --button-bg: var(--ind-bg-brand-solid);
+}
+
+/*
+  The band's two exported images, treated rather than recoloured because their
+  colours are baked in. The grid decoration above and below the security band
+  is an opaque white PNG: inverting it turns the white to black and screening
+  that over the section puts the section's own colour back behind the grid
+  lines, so the strip stops being two white bands across a dark page. The
+  fingerprint and eyes glyphs are flat #101828, which all but disappears on the
+  dark tile face, so they are flattened to white the way the dark header
+  already flattens the logo. Light mode leaves all three hooks unset and both
+  images are drawn untouched, exactly as the landing page draws them.
+*/
+:global([data-theme="dark"]) .main {
+  --band-grid-filter: invert(1);
+  --band-grid-blend: screen;
+  --band-glyph-filter: brightness(0) invert(1);
+}
+
+/* Responsive layout */
+@media (max-width: 1199px) {
+  .hero {
+    height: auto;
+    padding: 128px 48px 88px;
+  }
+
+  .heroRail {
+    width: 100%;
+  }
+
+  .heroCopy h1 {
+    font-size: 56px;
+    letter-spacing: -1.6px;
+    line-height: 1.08;
+  }
+
+  .waysSection {
+    padding: 88px 48px;
+  }
+}
+
+@media (max-width: 991px) {
+  .hero {
+    padding: 120px 20px 72px;
+  }
+
+  .waysSection {
+    padding: 80px 20px;
+  }
+}
+
+@media (max-width: 767px) {
+  .hero {
+    padding: 108px 20px 64px;
+  }
+
+  .heroCopy {
+    gap: 24px;
+  }
+
+  .heroCopy h1 {
+    font-size: 40px;
+    letter-spacing: -1.2px;
+    line-height: 1.1;
+  }
+
+  .heroCopy p {
+    font-size: 17px;
+    line-height: 26px;
+  }
+
+  .heroActions {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .waysSection {
+    padding: 72px 20px;
+  }
+}
+
+@media (max-width: 479px) {
+  .heroCopy h1 {
+    font-size: 34px;
+    letter-spacing: -1px;
+  }
+
+  .heroActions > a {
+    width: 100%;
+  }
+
+  .heroActions > .secondaryButton {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /*
+    Page-prefixed for the same reason the rule above is: .secondaryButton is
+    itself prefixed, so an unprefixed selector here would lose to it and the
+    transition would survive the preference.
+  */
+  .individualPage .skipLink,
+  .individualPage .secondaryButton {
+    transition: none;
+  }
+
+  .heroVideo {
+    display: none;
+  }
+}
