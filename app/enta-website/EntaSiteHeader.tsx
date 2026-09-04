@@ -2,15 +2,9 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import styles from "../enta-website.module.css";
-import changelogStyles from "./changelog.module.css";
+import { siteNavigationItems } from "./entaWebsiteData";
+import styles from "./enta-website.module.css";
 import { EntaLogo } from "./EntaLogo";
-
-const navigationItems = [
-  { label: "Individual", href: "/enta-website#individual" },
-  { label: "Business", href: "/enta-website#business" },
-  { label: "Security", href: "/enta-website#security" },
-] as const;
 
 const signupUrl = "https://app.entashiga.io/signup";
 const loginUrl = "https://app.entashiga.io/login";
@@ -18,7 +12,16 @@ const loginUrl = "https://app.entashiga.io/login";
 const cx = (...values: Array<string | false | null | undefined>) =>
   values.filter(Boolean).join(" ");
 
-export function EntaChangelogHeader() {
+type EntaSiteHeaderProps = {
+  /** href of the nav item for the page being shown, which gets the underline. */
+  activeHref?: string;
+};
+
+/**
+ * The header every page outside the landing page shares. The landing page keeps
+ * its own copy because its nav items are in-page anchors rather than routes.
+ */
+export function EntaSiteHeader({ activeHref }: EntaSiteHeaderProps) {
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
   const [scrolled, setScrolled] = useState(false);
@@ -116,11 +119,19 @@ export function EntaChangelogHeader() {
             </Link>
 
             <div className={styles.desktopLinks}>
-              {navigationItems.map((item) => (
-                <Link href={item.href} key={item.label}>
-                  {item.label}
-                </Link>
-              ))}
+              {siteNavigationItems.map((item) => {
+                const current = item.href === activeHref;
+                return (
+                  <Link
+                    className={cx(current && styles.navLinkActive)}
+                    href={item.href}
+                    key={item.label}
+                    aria-current={current ? "page" : undefined}
+                  >
+                    {item.label}
+                  </Link>
+                );
+              })}
             </div>
 
             <div className={styles.navActions}>
@@ -171,19 +182,20 @@ export function EntaChangelogHeader() {
             </button>
           </div>
 
-          {navigationItems.map((item) => (
+          {siteNavigationItems.map((item) => (
             <Link
               className={styles.mobileMenuRow}
               href={item.href}
               key={item.label}
               onClick={() => setMenuOpen(false)}
+              aria-current={item.href === activeHref ? "page" : undefined}
             >
               {item.label}
             </Link>
           ))}
 
           <div className={styles.mobileMenuBottom}>
-            <a className={changelogStyles.mobileLogin} href={loginUrl}>
+            <a className={styles.mobileLogin} href={loginUrl}>
               Log in
             </a>
             <a

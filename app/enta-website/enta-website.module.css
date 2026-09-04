@@ -191,6 +191,23 @@
   background: #f9fafb;
 }
 
+/* The page you are on keeps the 24px rule Figma draws under its nav item. */
+.navLinkActive {
+  position: relative;
+}
+
+.navLinkActive::after {
+  position: absolute;
+  bottom: 5px;
+  left: 50%;
+  width: 24px;
+  height: 2px;
+  border-radius: 1px;
+  background: #1570ef;
+  content: "";
+  transform: translateX(-50%);
+}
+
 .navActions {
   display: flex;
   align-items: center;
@@ -214,9 +231,9 @@
 }
 
 .primaryButton {
-  border-color: var(--enta-blue);
+  border-color: var(--button-border, var(--enta-blue));
   border-radius: 12px;
-  background: var(--enta-blue);
+  background: var(--button-bg, var(--enta-blue));
   color: #edeef0 !important;
   box-shadow: 0 1px 0 rgba(27, 31, 35, .2);
 }
@@ -693,17 +710,49 @@
   flex: 0 0 auto;
 }
 
+/*
+  --band-* hooks.
+
+  The three bands below the savings section (send / buy / hold, security
+  insights and the FAQ) render on the landing page and on the individual page
+  from one set of components, so every colour they paint reads a hook with the
+  landing page's own literal as its fallback. The landing page sets none of
+  them and is therefore unchanged; a page that wants the bands in its own
+  palette sets them, the way the security page already sets --feature-* on its
+  recovery list.
+
+  hook                  paints                              landing value
+  ---------------------------------------------------------------------------
+  --band-bg-primary     features and security backgrounds   #ffffff
+  --band-bg-secondary   the FAQ background                  #f9fafb
+  --band-heading        every heading in the three bands    var(--enta-ink)
+  --band-body           the features description            var(--enta-copy)
+  --band-panel          the feature visual frame            #f7f7f9
+  --band-card           the security panel                  #f8f9fa
+  --band-card-title     the two security point titles       #151517
+  --band-card-body      the two security point bodies       #535361
+  --band-tile-wrap      the 76px halo behind an icon        rgba(29,29,32,.05)
+  --band-tile-face      the 64px face inside it             #ffffff
+  --band-rule           the rules between FAQ rows          #e4e7ec
+
+  The accordion inside the features band reads the older --feature-* and
+  --button-* hooks, which work the same way and are already in use.
+
+  Not hooked, because they are artwork rather than surfaces: the security grid
+  decoration, the shield illustration and the FAQ chevron are exported images.
+*/
+
 /* Send / buy / hold */
 .featuresSection {
-  height: 941px;
+  height: 856px;
   padding: 140px 142px;
-  background: #fff;
+  background: var(--band-bg-primary, #fff);
 }
 
 .featuresInner {
   width: 100%;
   max-width: 1156px;
-  height: 661px;
+  height: 576px;
   margin: 0 auto;
 }
 
@@ -731,13 +780,35 @@
   letter-spacing: -.3px;
 }
 
+/*
+  A 619x181 column: a 507px heading over a 420px description, 40px apart, in a
+  941px section. That is what the landing page has shipped since it was built,
+  and Figma 1:5112, the individual frame's own Features section, is drawn to
+  the same numbers, so both pages that render this band share one block.
+*/
+/*
+  This section sets its description beside the heading rather than under it, so
+  the two share one 96px row (Figma 201:7680, the layout the designer asked for
+  on 2026-09-03). min-height rather than height so the copy can take a third
+  line on a narrow desktop without being clipped.
+*/
 .featuresSection .sectionHeading {
-  width: 619px;
-  height: 181px;
+  width: 100%;
+  min-height: 96px;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  column-gap: 40px;
 }
 
 .featuresSection .sectionHeading h2 {
   width: 507px;
+  flex: 0 0 auto;
+  color: var(--band-heading, var(--enta-ink));
+}
+
+.featuresSection .sectionHeading p {
+  color: var(--band-body, var(--enta-copy));
 }
 
 .featuresBody {
@@ -759,7 +830,7 @@
   position: relative;
   width: 100%;
   padding: 24px 0;
-  border-bottom: 1px solid #e4e7ec;
+  border-bottom: 1px solid var(--feature-rule, #e4e7ec);
 }
 
 .featureItem:first-child {
@@ -772,7 +843,7 @@
   position: absolute;
   inset: auto 0 -1px;
   height: 1px;
-  background: var(--enta-blue);
+  background: var(--feature-accent, var(--enta-blue));
   transform: scaleX(var(--feature-progress, 0));
   transform-origin: left center;
   will-change: transform;
@@ -780,7 +851,7 @@
 
 .featureLabel {
   margin: 0;
-  color: var(--enta-ink);
+  color: var(--feature-title, var(--enta-ink));
   font-size: 16px;
   font-weight: 600;
   line-height: 24px;
@@ -830,7 +901,7 @@
 /* overflow: hidden on the wrapper stops this margin collapsing out of it. */
 .featurePanel p {
   margin: 12px 0 0;
-  color: var(--enta-muted);
+  color: var(--feature-body, var(--enta-muted));
   font-size: 16px;
   font-weight: 400;
   line-height: 24px;
@@ -853,7 +924,7 @@
   height: 400px;
   overflow: hidden;
   border-radius: 16px;
-  background: #f7f7f9;
+  background: var(--band-panel, #f7f7f9);
 }
 
 /* Every layer fills the same frame. The gradient sits under the loops, so an
@@ -1473,9 +1544,18 @@
   gap: 40px;
   padding: 80px 0;
   overflow: hidden;
-  background: #fff;
+  background: var(--band-bg-primary, #fff);
 }
 
+/*
+  The decoration is an opaque white PNG with #f1f3f5 and #e4e7ec grid lines
+  baked in, so a page that paints the band dark has to treat it rather than
+  recolour it. Both hooks are inert here: `none` and `normal` are the initial
+  values, and `mix-blend-mode: normal` creates no stacking context, so the
+  landing page renders exactly as before. Inverted and screened, the white
+  drops out to whatever the section behind it is painted and the grid lines
+  come back as a soft light grid.
+*/
 .securityGridTop,
 .securityGridBottom {
   display: block;
@@ -1483,6 +1563,8 @@
   height: 70px;
   max-width: none;
   flex: 0 0 auto;
+  filter: var(--band-grid-filter, none);
+  mix-blend-mode: var(--band-grid-blend, normal);
 }
 
 .securityGridBottom {
@@ -1507,7 +1589,7 @@
 
 .securityHeading h2 {
   width: 619px;
-  color: var(--enta-ink);
+  color: var(--band-heading, var(--enta-ink));
   font-size: 40px;
   font-weight: 700;
   line-height: 1.2;
@@ -1533,7 +1615,7 @@
   overflow: hidden;
   padding: 48px;
   border-radius: 32px;
-  background: #f8f9fa;
+  background: var(--band-card, #f8f9fa);
 }
 
 .securityIllustration {
@@ -1628,7 +1710,7 @@
   height: 76px;
   place-items: center;
   border-radius: 12px;
-  background: rgba(29, 29, 32, .05);
+  background: var(--band-tile-wrap, rgba(29, 29, 32, .05));
   backdrop-filter: blur(4px);
 }
 
@@ -1637,7 +1719,7 @@
   width: 64px;
   height: 64px;
   border-radius: 8px;
-  background: #fff;
+  background: var(--band-tile-face, #fff);
   box-shadow:
     0 1px 1px rgba(13, 25, 37, .08),
     0 0 0 1px rgba(14, 26, 38, .05),
@@ -1645,15 +1727,21 @@
   content: "";
 }
 
+/*
+  Both glyphs are exported as flat #101828 SVGs, so a page that paints the tile
+  face dark has to treat them the way .headerDark treats the logo. The hook is
+  inert here: `none` is the initial value and the landing page never sets it.
+*/
 .securityIcon img {
   position: relative;
   z-index: 1;
   width: 40px;
   height: 40px;
+  filter: var(--band-glyph-filter, none);
 }
 
 .securityBenefits h3 {
-  color: #151517;
+  color: var(--band-card-title, #151517);
   font-size: 18px;
   font-weight: 700;
   line-height: 24px;
@@ -1663,7 +1751,7 @@
 
 .securityBenefits p {
   width: 283px;
-  color: #535361;
+  color: var(--band-card-body, #535361);
   font-size: 16px;
   font-weight: 400;
   line-height: 1.5;
@@ -1674,7 +1762,7 @@
 .faqSection {
   height: 392.188px;
   padding: 80px 142px;
-  background: #f9fafb;
+  background: var(--band-bg-secondary, #f9fafb);
 }
 
 .faqInner {
@@ -1688,7 +1776,7 @@
 
 .faqInner > h2 {
   width: 457px;
-  color: var(--enta-ink);
+  color: var(--band-heading, var(--enta-ink));
   font-size: 40px;
   font-weight: 700;
   line-height: 1.2;
@@ -1707,7 +1795,7 @@
   grid-template-columns: 24px 1fr;
   align-items: center;
   column-gap: 24px;
-  border-bottom: 1px solid #e4e7ec;
+  border-bottom: 1px solid var(--band-rule, #e4e7ec);
 }
 
 .faqRow > img {
@@ -1717,7 +1805,7 @@
 }
 
 .faqRow h3 {
-  color: var(--enta-ink);
+  color: var(--band-heading, var(--enta-ink));
   font-size: 18px;
   font-weight: 600;
   line-height: 24px;
@@ -1888,6 +1976,19 @@
   width: 1px;
   height: 16px;
   background: #344054;
+}
+
+/* Doubled so it outranks .footerBottom, whose grey fails contrast on its own. */
+.footerBottomAccessible.footerBottomAccessible {
+  color: #98a2b3;
+}
+
+/* The mobile menu's Log in row needs a tap target the bare link does not give. */
+.mobileLogin {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  padding-block: 8px;
 }
 
 
@@ -2117,6 +2218,12 @@
   .savingsSetup {
     width: 100%;
     height: auto;
+  }
+
+  .featuresSection .sectionHeading {
+    min-height: 0;
+    flex-direction: column;
+    align-items: flex-start;
   }
 
   .featuresBody {

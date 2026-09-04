@@ -1,5 +1,5 @@
 import Image from "next/image";
-import styles from "../enta-website.module.css";
+import styles from "./enta-website.module.css";
 
 const cx = (...values: Array<string | false | null | undefined>) =>
   values.filter(Boolean).join(" ");

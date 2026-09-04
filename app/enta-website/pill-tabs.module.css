@@ -1,0 +1,470 @@
+/*
+  The horizontal pill tabs: a centred heading, a row of pills, and one card
+  under them whose panel changes when a pill is clicked.
+
+  Written for the individual page and now shared with the business page, so the
+  geometry below is the geometry both Figma frames draw and only the colours,
+  the heading width and the shape of the panel's tail differ between them.
+
+  Every colour reads a hook whose fallback is the individual page's own light
+  literal, so a page that sets nothing still renders the light design. A page
+  that themes the component sets the hooks on an ancestor.
+
+  hook                        paints
+  ---------------------------------------------------------------------------
+  --pill-heading              the section heading
+  --pill-heading-width        how wide that heading is allowed to run
+  --pill-idle-border          the border of a pill that is not selected
+  --pill-idle-fg              its label and glyph
+  --pill-idle-hover-border    the pill's border, label and glyph on hover,
+  --pill-idle-hover-fg        and the surface behind them
+  --pill-idle-hover-bg
+  --pill-selected-border      the selected pill's 2px border
+  --pill-selected-bg          its fill
+  --pill-selected-fg          its label and glyph
+  --pill-card-bg              the card under the pills
+  --pill-panel-bg             the framed panel inside it
+  --pill-title                a panel's heading
+  --pill-body                 a panel's paragraph
+  --pill-body-tracking        the tracking on that paragraph
+  --pill-point                a panel's check bullets
+  --pill-focus                the focus ring
+  --pill-intro-min            fixed offset above a panel's bullet block
+  --pill-action-*             the outlined button a panel can end in instead
+
+  Not hooked, for the same reason the pages do not hook their artwork: the
+  green check beside a bullet is a two-tone exported asset whose #079455 disc
+  is identical in both Helium themes, and the colour wheel behind each panel is
+  a fixed pastel gradient the designer drew rather than a themed surface.
+*/
+
+.tabs {
+  display: flex;
+  width: 100%;
+  max-width: 1156px;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 auto;
+  gap: 48px;
+}
+
+.head {
+  display: flex;
+  max-width: 100%;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
+.head h2 {
+  width: var(--pill-heading-width, 690px);
+  max-width: 100%;
+  color: var(--pill-heading, #101828);
+  font-size: 40px;
+  font-weight: 700;
+  letter-spacing: -1.7px;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.tabList {
+  display: flex;
+  max-width: 100%;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+/*
+  A selected pill carries a 2px border and 16px of padding; the others carry a
+  1px border and 17px, so the box is the same width either way and the row does
+  not shuffle sideways on a click. min-height keeps the row 40px tall, which is
+  the height Figma's selected pill sets.
+
+  Two classes deep on purpose: the pill is a <button> and the landing
+  stylesheet's `.page button { font: inherit }` is a class plus a type, so a
+  bare `.tab` loses to it and the whole font shorthand, weight and line-height
+  included, resets to the inherited value.
+*/
+.tabs .tab {
+  display: inline-flex;
+  min-height: 40px;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 17px;
+  border: 1px solid var(--pill-idle-border, #e4e7ec);
+  border-radius: 9999px;
+  background: transparent;
+  /* Unselected pills sit back: the label and its masked glyph both take the
+     quieter text colour, so only the selected pill carries weight. */
+  color: var(--pill-idle-fg, #475467);
+  cursor: pointer;
+  gap: 8px;
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: -.6px;
+  line-height: 1.2;
+  transition:
+    border-color 200ms ease,
+    background-color 200ms ease,
+    color 200ms ease;
+}
+
+.tabs .tab:hover:not(.tabSelected) {
+  border-color: var(--pill-idle-hover-border, #d0d5dd);
+  background: var(--pill-idle-hover-bg, transparent);
+  color: var(--pill-idle-hover-fg, #101828);
+}
+
+.tabs .tabSelected {
+  padding: 8px 16px;
+  border: 2px solid var(--pill-selected-border, #1570ef);
+  background: var(--pill-selected-bg, #175cd3);
+  color: var(--pill-selected-fg, #fff);
+  cursor: default;
+  font-weight: 600;
+}
+
+/* The exported glyph, painted through the pill's own text colour rather than
+   shipped twice in two inks. */
+.tabIcon {
+  display: block;
+  width: 20px;
+  height: 20px;
+  flex: 0 0 auto;
+  background: currentcolor;
+  -webkit-mask: var(--pill-glyph) center / contain no-repeat;
+  mask: var(--pill-glyph) center / contain no-repeat;
+}
+
+/* The ghost copy of the label sits in the same cell and reserves the width. */
+.tabLabel {
+  display: grid;
+  white-space: nowrap;
+}
+
+.tabLabel > span {
+  grid-area: 1 / 1;
+}
+
+.tabLabelGhost {
+  font-weight: 600;
+  visibility: hidden;
+}
+
+/*
+  Every panel stays in this one grid cell, so the card is as tall as the
+  tallest of the four and clicking a pill never resizes it.
+*/
+.card {
+  display: grid;
+  width: 1148px;
+  max-width: 100%;
+  padding: 56px;
+  border-radius: 32px;
+  background: var(--pill-card-bg, #f8f9fa);
+}
+
+.panel {
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: 40px;
+  grid-area: 1 / 1;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 220ms ease,
+    visibility 220ms ease;
+}
+
+.panelActive {
+  opacity: 1;
+  visibility: visible;
+}
+
+.panel:focus-visible {
+  outline: 2px solid var(--pill-focus, #175cd3);
+  outline-offset: 6px;
+  border-radius: 8px;
+}
+
+.panelCopy {
+  display: flex;
+  width: 471px;
+  flex: 0 0 auto;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 24px;
+}
+
+/*
+  A panel that ends in a button rather than a list runs the full height of the
+  visual beside it and pushes the button to the bottom, which is how the
+  business frames draw all four of theirs.
+*/
+.panelCopyAction {
+  min-height: 308px;
+  justify-content: space-between;
+}
+
+/*
+  --pill-intro-min is a fixed offset rather than a gap: the individual frames
+  put the bullet block the same distance below the top of the copy column in
+  every panel, whatever height the intro above it takes. The gap is what the
+  offset degrades into, so a narrower column that wraps the intro past the
+  offset still keeps 24px between the two blocks instead of touching.
+*/
+.panelIntro {
+  display: flex;
+  width: 100%;
+  min-height: var(--pill-intro-min, 0);
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 24px;
+}
+
+.panelIntro h3 {
+  margin: 0;
+  color: var(--pill-title, #101828);
+  font-size: 32px;
+  font-weight: 600;
+  letter-spacing: -.48px;
+  line-height: 1.3;
+}
+
+/*
+  The tracking is a hook because the two frames disagree about it: the business
+  panels are drawn at the -1.5% the rest of that card uses, which is what holds
+  the paragraph to three lines in a 471px column, and the individual panels are
+  drawn without it. The fallback is the individual page's own setting.
+*/
+.panelIntro p {
+  color: var(--pill-body, #344054);
+  font-size: 18px;
+  font-weight: 400;
+  letter-spacing: var(--pill-body-tracking, normal);
+  line-height: 1.4;
+}
+
+.panelPoints {
+  display: flex;
+  width: 299px;
+  max-width: 100%;
+  flex-direction: column;
+  align-items: flex-start;
+  margin: 0;
+  padding: 0;
+  gap: 16px;
+  list-style: none;
+}
+
+.panelPoints li {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 16px;
+  color: var(--pill-point, #344054);
+  font-size: 16px;
+  font-weight: 400;
+  letter-spacing: -.24px;
+  line-height: 1.4;
+}
+
+.panelPoints img {
+  display: block;
+  width: 20px;
+  height: 20px;
+  flex: 0 0 auto;
+}
+
+/* Two classes deep for the same reason .tab is: `.page a { color: inherit }`
+   would otherwise win over a bare class here. */
+.tabs .panelAction {
+  display: inline-flex;
+  width: 127px;
+  height: 50px;
+  min-height: 50px;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 16px;
+  border: 1px solid var(--pill-action-border, #cdd3db);
+  border-radius: 12px;
+  background: transparent;
+  color: var(--pill-action-fg, #31373d);
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: -.2px;
+  line-height: 24px;
+  transition:
+    border-color 200ms ease,
+    background-color 200ms ease,
+    color 200ms ease,
+    transform 200ms ease;
+}
+
+.tabs .panelAction:hover {
+  border-color: var(--pill-action-hover-border, #101828);
+  background: var(--pill-action-hover-bg, #fff);
+  color: var(--pill-action-hover-fg, #101828);
+  transform: translateY(-1px);
+}
+
+.panelVisual {
+  position: relative;
+  width: 476px;
+  height: 308px;
+  flex: 0 0 auto;
+  align-self: center;
+  overflow: hidden;
+  border-radius: 16px;
+  background: var(--pill-panel-bg, #f7f7f9);
+}
+
+/*
+  Figma's glow: a 928px colour wheel, clipped by a 789x902 window, blurred by
+  32px, turned 151.39deg with an 8.59deg skew and centred on (233, 507) of the
+  476x308 panel. Every length is a percentage of the panel, so the whole
+  construction keeps its place once the panel goes fluid below 1200px.
+*/
+.panelGlow {
+  position: absolute;
+  top: -34.315%;
+  right: -54.139%;
+  left: -56.238%;
+  display: flex;
+  height: 397.854%;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.panelGlow > span {
+  display: block;
+  width: 78.789%;
+  height: 73.617%;
+  background: url("/enta-website/panel-glow.svg") 0 0 / 117.618% 102.872% no-repeat;
+  filter: blur(32px);
+  transform: rotate(151.39deg) skewx(-8.59deg);
+}
+
+@media (max-width: 1199px) {
+  .tabList {
+    flex-wrap: wrap;
+  }
+
+  .card {
+    width: 100%;
+  }
+
+  .panelCopy,
+  .panelVisual {
+    width: auto;
+    min-width: 0;
+    flex: 1 1 0;
+  }
+
+  .panelVisual {
+    height: auto;
+    aspect-ratio: 476 / 308;
+  }
+}
+
+@media (max-width: 991px) {
+  .tabs {
+    gap: 40px;
+  }
+
+  .card {
+    padding: 48px;
+  }
+
+  .panel {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 32px;
+  }
+
+  .panelCopy,
+  .panelVisual {
+    width: 100%;
+    flex: none;
+  }
+
+  /*
+    Stacked, the card is one column and the desktop measurements above stop
+    applying: the fixed bullet offset is dropped, the two blocks fall back to
+    the 40px gap they had before it existed, and a panel that ends in a button
+    stops reserving the height of the visual it no longer sits beside.
+  */
+  .panelCopy {
+    gap: 40px;
+  }
+
+  .panelCopyAction {
+    min-height: 0;
+  }
+
+  .panelIntro {
+    min-height: 0;
+  }
+
+  .panelPoints {
+    width: 100%;
+  }
+}
+
+@media (max-width: 767px) {
+  .head h2 {
+    font-size: 34px;
+    letter-spacing: -1.2px;
+    line-height: 1.16;
+  }
+
+  .tabList {
+    gap: 8px;
+  }
+
+  .tabs .tab {
+    font-size: 15px;
+    letter-spacing: -.4px;
+  }
+
+  .card {
+    padding: 32px 24px;
+    border-radius: 24px;
+  }
+
+  .panelIntro h3 {
+    font-size: 26px;
+    letter-spacing: -.4px;
+  }
+
+  .panelIntro p {
+    font-size: 17px;
+  }
+}
+
+@media (max-width: 479px) {
+  .head h2 {
+    font-size: 30px;
+    letter-spacing: -1px;
+  }
+
+  .panelIntro h3 {
+    font-size: 24px;
+  }
+
+  .tabs .panelAction {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tabs .tab,
+  .tabs .panelAction,
+  .tabs .panel {
+    transition: none;
+  }
+}

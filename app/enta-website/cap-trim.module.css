@@ -1,0 +1,46 @@
+/*
+  Cap-height trimming for the site's 20px/30px section paragraphs.
+
+  Figma draws these blocks with text-box-trim: trim-both and
+  text-box-edge: cap alphabetic, so the box starts at the cap line of the first
+  line and ends on the last baseline. Plus Jakarta Sans at 20px over a 30px
+  line leaves 8.6px of half-leading above the caps and 6.5px below the last
+  baseline, so two table boxes take exactly that back: two lines then measure
+  Figma's 45px and three measure its 75px, and everything under the paragraph
+  moves up with it.
+
+  At 767px and below the same paragraphs drop to 17px over a 26px line on every
+  page that uses this, so the two margins scale with them.
+
+  Written once here because the security page and the business page both draw
+  these paragraphs. Lifted out of security.module.css unchanged, so the
+  security page renders exactly as it did before.
+
+  Table boxes rather than `display: block` pseudo-elements: a table box does
+  not let the paragraph's own margins collapse through it, which is what lets
+  the negative margins land on the text instead of on the block above.
+*/
+
+.capTrim::before,
+.capTrim::after {
+  display: table;
+  content: "";
+}
+
+.capTrim::before {
+  margin-top: -8.6px;
+}
+
+.capTrim::after {
+  margin-bottom: -6.5px;
+}
+
+@media (max-width: 767px) {
+  .capTrim::before {
+    margin-top: -7.3px;
+  }
+
+  .capTrim::after {
+    margin-bottom: -5.5px;
+  }
+}

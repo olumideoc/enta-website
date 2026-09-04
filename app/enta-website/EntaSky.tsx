@@ -1,9 +1,19 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import styles from "./changelog.module.css";
 
-export function EntaChangelogSky() {
+type EntaSkyProps = {
+  /** Class that gives the backdrop its box: the geometry is per page. */
+  className?: string;
+  /** Class for the video itself, so each page can set its own crop. */
+  videoClassName?: string;
+};
+
+/**
+ * The looping sky behind a page hero. Shared by the changelog and the security
+ * page; each one supplies its own geometry through the two class names.
+ */
+export function EntaSky({ className, videoClassName }: EntaSkyProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
@@ -45,10 +55,10 @@ export function EntaChangelogSky() {
   }, []);
 
   return (
-    <div className={styles.heroMedia} aria-hidden="true">
+    <div className={className} aria-hidden="true">
       <video
         ref={videoRef}
-        className={styles.heroVideo}
+        className={videoClassName}
         muted
         loop
         playsInline

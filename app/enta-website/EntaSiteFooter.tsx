@@ -1,11 +1,17 @@
-import { FooterArrowIcon } from "../FooterArrowIcon";
-import { FooterSocialIcon } from "../FooterSocialIcon";
-import { footerColumns, footerSocialLinks } from "../entaWebsiteData";
-import styles from "../enta-website.module.css";
-import changelogStyles from "./changelog.module.css";
+import Link from "next/link";
+import { FooterArrowIcon } from "./FooterArrowIcon";
+import { FooterSocialIcon } from "./FooterSocialIcon";
+import { footerColumns, footerSocialLinks } from "./entaWebsiteData";
+import styles from "./enta-website.module.css";
 import { EntaLogo } from "./EntaLogo";
 
-export function EntaChangelogFooter() {
+type EntaSiteFooterProps = {
+  /** Label of the footer link for the page being shown, if it has one. */
+  currentLabel?: string;
+};
+
+/** The footer every page outside the landing page shares. */
+export function EntaSiteFooter({ currentLabel }: EntaSiteFooterProps) {
   return (
     <footer className={styles.footer} data-nav-dark="true">
       <div className={styles.footerInner}>
@@ -29,18 +35,37 @@ export function EntaChangelogFooter() {
                     </>
                   );
 
-                  return link.href ? (
+                  if (!link.href) {
+                    return <span key={link.label}>{content}</span>;
+                  }
+
+                  // A link to one of this site's own routes goes through
+                  // next/link, the way the header's do, so the footer changes
+                  // page without reloading the document.
+                  if (!isExternal && link.href.startsWith("/")) {
+                    return (
+                      <Link
+                        href={link.href}
+                        key={link.label}
+                        aria-current={
+                          link.label === currentLabel ? "page" : undefined
+                        }
+                      >
+                        {content}
+                      </Link>
+                    );
+                  }
+
+                  return (
                     <a
                       href={link.href}
                       key={link.label}
                       target={isExternal ? "_blank" : undefined}
                       rel={isExternal ? "noopener noreferrer" : undefined}
-                      aria-current={link.label === "Changelog" ? "page" : undefined}
+                      aria-current={link.label === currentLabel ? "page" : undefined}
                     >
                       {content}
                     </a>
-                  ) : (
-                    <span key={link.label}>{content}</span>
                   );
                 })}
               </div>
@@ -68,7 +93,7 @@ export function EntaChangelogFooter() {
         <div
           className={[
             styles.footerBottom,
-            changelogStyles.footerBottomAccessible,
+            styles.footerBottomAccessible,
           ].join(" ")}
         >
           <span>©2026 Enta</span>

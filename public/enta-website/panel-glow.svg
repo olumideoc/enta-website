@@ -1,0 +1,16 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="928" height="928" viewBox="0 0 928 928" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="color-wheel.svg" clip-path="url(#clip0_0_10)">
+<path id="Vector" d="M463.999 928C720.259 928 927.999 720.26 927.999 464C927.999 207.74 720.259 -0.000229351 463.999 -0.000229351C207.739 -0.000229351 -0.00128174 207.74 -0.00128174 464C-0.00128174 720.26 207.739 928 463.999 928Z" fill="url(#paint0_linear_0_10)" fill-opacity="0.6"/>
+</g>
+<defs>
+<linearGradient id="paint0_linear_0_10" x1="927.999" y1="464" x2="151.092" y2="806.617" gradientUnits="userSpaceOnUse">
+<stop stop-color="#D7F0FF"/>
+<stop offset="0.333333" stop-color="#D9CFFF"/>
+<stop offset="0.666667" stop-color="#D2D1FF"/>
+<stop offset="1" stop-color="#D2ECFF"/>
+</linearGradient>
+<clipPath id="clip0_0_10">
+<rect width="928" height="928" fill="white"/>
+</clipPath>
+</defs>
+</svg>

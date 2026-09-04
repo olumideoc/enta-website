@@ -186,17 +186,6 @@
   height: auto;
 }
 
-.mobileLogin {
-  display: inline-flex;
-  min-height: 44px;
-  align-items: center;
-  padding-block: 8px;
-}
-
-.footerBottomAccessible.footerBottomAccessible {
-  color: #98a2b3;
-}
-
 @media (max-width: 809px) {
   .hero {
     min-height: 340px;

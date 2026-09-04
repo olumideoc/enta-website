@@ -1,3 +1,17 @@
+/**
+ * Primary navigation. All three items are routes now that Business has a page
+ * of its own, so the landing page and every other page point at the same set
+ * and the old #business anchor into the landing page's audience card is gone.
+ */
+export const navigationItems = [
+  { label: "Individual", href: "/enta-website/individual" },
+  { label: "Business", href: "/enta-website/business" },
+  { label: "Security", href: "/enta-website/security" },
+] as const;
+
+/** Alias kept for the shared header, which reads this name. */
+export const siteNavigationItems = navigationItems;
+
 export type LogoStripItem = {
   name: string;
   src: string;
@@ -41,10 +55,12 @@ export const audienceCards = [
 ] as const;
 
 export type FeatureItemMedia = {
-  /** Path stem under enta-landing: `<basename>-light.{webm,mp4}` and `-light-poster.jpg`. */
+  /** Path stem within the folder: `<basename>-light.{webm,mp4}` and `-light-poster.jpg`. */
   basename: string;
   /** One full pass of the loop, which is also the item's autoplay dwell. */
   durationMs: number;
+  /** Folder under /enta-website/ holding the loop. */
+  dir?: string;
 };
 
 export type FeatureItem = {
@@ -80,6 +96,21 @@ export const featureItems: readonly FeatureItem[] = [
   },
 ];
 
+/**
+ * The send / buy / hold section's heading row. The landing page and the
+ * individual page render one EntaFeaturesBand between them, so this copy is
+ * written once here.
+ *
+ * The apostrophes in the description are the straight ones the landing page
+ * has always rendered (it spelled them `&apos;`), kept as they were.
+ */
+export const featuresBand = {
+  heading: "Send, buy and hold digital dollars, gold and Bitcoin",
+  description:
+    "One account for the money you're moving and the assets you're keeping.",
+  ctaLabel: "Get started",
+} as const;
+
 export const faqQuestions = [
   "What documents do I need to register?",
   "How do you keep funds secure?",
@@ -87,12 +118,36 @@ export const faqQuestions = [
   "Can I access my money any time?",
 ] as const;
 
+/**
+ * The security band, shared by the landing page and the individual page. The
+ * two differ only in where "Explore security" points, which is a prop.
+ */
+export const securityBand = {
+  heading: "Security that protects you. Intelligence that helps you.",
+  ctaLabel: "Explore security",
+  points: [
+    {
+      icon: "/enta-website/enta-landing/security-fingerprint.svg",
+      title: "Only you can get in",
+      body: "Use your passkey to access your account. If you lose your phone, you can recover it securely—without giving anyone else access.",
+    },
+    {
+      icon: "/enta-website/enta-landing/security-eyes.svg",
+      title: "A second look before you pay",
+      body: "We’ll highlight favourable rates and flag details worth checking, like an incorrect address or an unexpected fee. You always make the final call.",
+    },
+  ],
+} as const;
+
+/** Heading over the FAQ list. */
+export const faqTitle = "FAQs";
+
 export const footerColumns = [
   {
     title: "Products",
     links: [
-      { label: "Individuals", href: "/enta-website#individual" },
-      { label: "Business", href: "/enta-website#business" },
+      { label: "Individuals", href: "/enta-website/individual" },
+      { label: "Business", href: "/enta-website/business" },
       {
         label: "Pulse (For Platforms)",
         href: "https://pulse-staging-seven.vercel.app/",
@@ -103,7 +158,7 @@ export const footerColumns = [
   {
     title: "Explore",
     links: [
-      { label: "Security", href: "/enta-website#security" },
+      { label: "Security", href: "/enta-website/security" },
       { label: "Changelog", href: "/enta-website/changelog" },
       { label: "Blog", href: null },
     ],

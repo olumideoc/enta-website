@@ -5,10 +5,11 @@ import {
   useCallback,
   useEffect,
   useId,
+  useMemo,
   useRef,
   useState,
 } from "react";
-import { featureItems } from "./entaWebsiteData";
+import { type FeatureItem, featureItems } from "./entaWebsiteData";
 import styles from "./enta-website.module.css";
 
 const cx = (...values: Array<string | false | null | undefined>) =>
@@ -17,24 +18,38 @@ const cx = (...values: Array<string | false | null | undefined>) =>
 /** How long an item stays open before autoplay moves to the next one. */
 export const STEP_MS = 5000;
 
-// Items still waiting on copy render as plain labels, so only the ones that can
-// open take part in the roving arrow-key order.
-const expandableItems = featureItems.filter((item) => item.description !== null);
+// A row that arrives without copy renders as a plain label, so only the ones
+// that can open take part in the roving arrow-key order.
+const expandable = (
+  item: FeatureItem,
+): item is FeatureItem & { description: string } => item.description !== null;
 
 /** The item the list opens with, so the visual can match it on first paint. */
-export const DEFAULT_FEATURE_ID = expandableItems[0]?.id ?? null;
+export const defaultFeatureId = (items: readonly FeatureItem[] = featureItems) =>
+  items.find(expandable)?.id ?? null;
 
-// An item with a loop dwells for exactly one pass of it, so the flow the copy
-// describes finishes before autoplay moves on.
-const stepMsFor = (id: string | null) =>
-  featureItems.find((item) => item.id === id)?.media?.durationMs ?? STEP_MS;
+/** The landing list's opening item, kept as a constant for that page's state. */
+export const DEFAULT_FEATURE_ID = defaultFeatureId();
 
 type FeatureAccordionProps = {
   /** Fires with the open item's id, including the one open on mount. */
   onActiveChange?: (id: string) => void;
+  /** Rows to render; the landing page's own list is the default. */
+  items?: readonly FeatureItem[];
 };
 
-export function FeatureAccordion({ onActiveChange }: FeatureAccordionProps) {
+export function FeatureAccordion({
+  onActiveChange,
+  items = featureItems,
+}: FeatureAccordionProps) {
+  const expandableItems = useMemo(() => items.filter(expandable), [items]);
+  // An item with a loop dwells for exactly one pass of it, so the flow the copy
+  // describes finishes before autoplay moves on.
+  const stepMsFor = useCallback(
+    (id: string | null) =>
+      items.find((item) => item.id === id)?.media?.durationMs ?? STEP_MS,
+    [items],
+  );
   const baseId = useId();
   const buttonRefs = useRef<Array<HTMLButtonElement | null>>([]);
   // The list element belongs to the page, not to this component, so the hover /
@@ -150,7 +165,7 @@ export function FeatureAccordion({ onActiveChange }: FeatureAccordionProps) {
       list.removeEventListener("pointerleave", handlePointerLeave);
       document.removeEventListener("visibilitychange", handleVisibility);
     };
-  }, [motionOk, openItem]);
+  }, [motionOk, openItem, expandableItems, stepMsFor]);
 
   const handleKeyDown = (event: KeyboardEvent<HTMLButtonElement>, index: number) => {
     const count = expandableItems.length;
@@ -172,10 +187,10 @@ export function FeatureAccordion({ onActiveChange }: FeatureAccordionProps) {
 
   return (
     <>
-      {featureItems.map((item, itemIndex) => {
+      {items.map((item, itemIndex) => {
         const listRefProp = itemIndex === 0 ? captureList : undefined;
 
-        if (item.description === null) {
+        if (!expandable(item)) {
           return (
             <div className={styles.featureItem} ref={listRefProp} key={item.id}>
               <div className={styles.featureLabel}>{item.label}</div>

@@ -1,0 +1,51 @@
+/*
+  The site's one icon treatment: a 76px translucent halo around a 64px raised
+  face with a 40px glyph inside it.
+
+  Written once here because the security page and the business page both draw
+  it. Lifted out of security.module.css unchanged, so the security page renders
+  exactly as it did before; only the three colours are read through hooks now.
+
+  hook            paints                    fallback (the landing literal)
+  ------------------------------------------------------------------------
+  --tile-wrap     the 76px halo             rgba(29, 29, 32, .05)
+  --tile-face     the 64px face inside it   #ffffff
+  --tile-glyph    the 40px glyph            #101828
+
+  A page that themes the tile sets the three hooks on an ancestor; a page that
+  does not gets the light values above.
+
+  The glyph is matched as `> *` rather than by class because the masked span is
+  a different CSS module on every page that draws one, and a class name from
+  one module cannot be named from another.
+*/
+
+.iconTile {
+  display: grid;
+  width: 76px;
+  height: 76px;
+  border-radius: 12px;
+  backdrop-filter: blur(4px);
+  background: var(--tile-wrap, rgba(29, 29, 32, .05));
+  place-items: center;
+}
+
+.iconTileFace {
+  display: grid;
+  width: 64px;
+  height: 64px;
+  border-radius: 8px;
+  background: var(--tile-face, #fff);
+  box-shadow:
+    0 1px 1px rgba(13, 25, 37, .08),
+    0 0 0 1px rgba(14, 26, 38, .05),
+    0 2px 3px rgba(13, 25, 37, .05),
+    inset 0 1px 0 rgba(255, 255, 255, .14);
+  place-items: center;
+}
+
+.iconTileFace > * {
+  width: 40px;
+  height: 40px;
+  color: var(--tile-glyph, #101828);
+}

@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import entaStyles from "../enta-website.module.css";
-import { EntaChangelogFooter } from "./EntaChangelogFooter";
-import { EntaChangelogHeader } from "./EntaChangelogHeader";
-import { EntaChangelogSky } from "./EntaChangelogSky";
+import { EntaSiteFooter } from "../EntaSiteFooter";
+import { EntaSiteHeader } from "../EntaSiteHeader";
+import { EntaSky } from "../EntaSky";
 import styles from "./changelog.module.css";
 import { changelogReleases } from "./entries";
 
@@ -33,11 +33,11 @@ export default function ChangelogPage() {
       <a className={styles.skipLink} href="#main-content">
         Skip to content
       </a>
-      <EntaChangelogHeader />
+      <EntaSiteHeader />
 
       <main id="main-content" className={styles.main} tabIndex={-1}>
         <section className={styles.hero} aria-labelledby="changelog-title">
-          <EntaChangelogSky />
+          <EntaSky className={styles.heroMedia} videoClassName={styles.heroVideo} />
           <div className={styles.heroRail}>
             <h1 id="changelog-title">Changelog</h1>
             <p>{changelogDescription}</p>
@@ -92,7 +92,7 @@ export default function ChangelogPage() {
         </section>
       </main>
 
-      <EntaChangelogFooter />
+      <EntaSiteFooter currentLabel="Changelog" />
     </div>
   );
 }

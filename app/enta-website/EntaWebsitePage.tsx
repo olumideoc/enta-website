@@ -1,18 +1,21 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import {
   audienceCards,
-  faqQuestions,
   footerColumns,
   footerSocialLinks,
   logoStrip,
+  navigationItems,
 } from "./entaWebsiteData";
+import { EntaLogo } from "./EntaLogo";
 import { CustomerReviews } from "./CustomerReviews";
 import { DashboardLoop } from "./DashboardLoop";
-import { DEFAULT_FEATURE_ID, FeatureAccordion } from "./FeatureAccordion";
-import { FeatureVisual } from "./FeatureVisual";
+import { EntaFaqBand } from "./EntaFaqBand";
+import { EntaFeaturesBand } from "./EntaFeaturesBand";
+import { EntaSecurityBand } from "./EntaSecurityBand";
 import { FooterArrowIcon } from "./FooterArrowIcon";
 import { FooterSocialIcon } from "./FooterSocialIcon";
 import { SavingsCalculator } from "./savings/SavingsCalculator.tsx";
@@ -21,50 +24,9 @@ import styles from "./enta-website.module.css";
 const cx = (...values: Array<string | false | null | undefined>) =>
   values.filter(Boolean).join(" ");
 
-const navigationItems = [
-  { label: "Individual", href: "#individual" },
-  { label: "Business", href: "#business" },
-  { label: "Security", href: "#security" },
-] as const;
-
 const signupUrl = "https://app.entashiga.io/signup";
 const loginUrl = "https://app.entashiga.io/login";
 
-
-function EntaLogo({
-  label,
-  business = false,
-}: {
-  label?: string;
-  business?: boolean;
-}) {
-  return (
-    <span
-      className={cx(styles.logo, business && styles.logoBusiness)}
-      role={label ? "img" : undefined}
-      aria-label={label}
-      aria-hidden={label ? undefined : true}
-    >
-      <Image
-        className={styles.entaLogomark}
-        src="/enta-website/enta-logomark.svg"
-        alt=""
-        width={23}
-        height={24}
-        priority
-      />
-      <Image
-        className={styles.entaWordmark}
-        src="/enta-website/enta-wordmark.svg"
-        alt=""
-        width={63}
-        height={18}
-        priority
-      />
-      {business && <small>BUSINESS</small>}
-    </span>
-  );
-}
 
 /** Scroll distance in px over which the fade above the dashboard grid dissolves. */
 const SNAPSHOT_FADE_SCROLL_DISTANCE = 280;
@@ -78,11 +40,6 @@ export function EntaWebsitePage() {
   const [scrolled, setScrolled] = useState(false);
   const [darkNav, setDarkNav] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  // The accordion owns which item is open; the page only relays it to the
-  // visual so the loop beside the list always matches the open copy.
-  const [activeFeatureId, setActiveFeatureId] = useState<string | null>(
-    DEFAULT_FEATURE_ID,
-  );
 
   useEffect(() => {
     let frame = 0;
@@ -243,9 +200,9 @@ export function EntaWebsitePage() {
 
             <div className={styles.desktopLinks}>
               {navigationItems.map((item) => (
-                <a href={item.href} key={item.label}>
+                <Link href={item.href} key={item.label}>
                   {item.label}
-                </a>
+                </Link>
               ))}
             </div>
 
@@ -298,14 +255,14 @@ export function EntaWebsitePage() {
           </div>
 
           {navigationItems.map((item) => (
-            <a
+            <Link
               className={styles.mobileMenuRow}
               href={item.href}
               key={item.label}
               onClick={() => setMenuOpen(false)}
             >
               {item.label}
-            </a>
+            </Link>
           ))}
 
           <div className={styles.mobileMenuBottom}>
@@ -442,30 +399,7 @@ export function EntaWebsitePage() {
           </div>
         </section>
 
-        <section className={styles.featuresSection}>
-          <div className={styles.featuresInner}>
-            <div className={styles.sectionHeading} data-reveal>
-              <h2>Send, buy and hold digital dollars, gold and Bitcoin</h2>
-              <p>
-                One account for the money you&apos;re moving and the assets you&apos;re
-                keeping.
-              </p>
-            </div>
-
-            <div className={styles.featuresBody}>
-              <div className={styles.featureList} data-reveal>
-                <FeatureAccordion onActiveChange={setActiveFeatureId} />
-                <a className={styles.primaryButton} href={signupUrl}>
-                  Get started
-                </a>
-              </div>
-
-              <div className={styles.featureVisual} aria-hidden="true" data-reveal>
-                <FeatureVisual activeId={activeFeatureId} />
-              </div>
-            </div>
-          </div>
-        </section>
+        <EntaFeaturesBand reveal />
 
         <section className={styles.savingsSection}>
           <div className={styles.savingsInner}>
@@ -493,99 +427,14 @@ export function EntaWebsitePage() {
 
         <CustomerReviews />
 
-        <section className={styles.securitySection} id="security">
-          <Image
-            className={styles.securityGridTop}
-            src="/enta-website/enta-landing/security-grid-decoration.png"
-            loading="eager"
-            alt=""
-            width={1440}
-            height={70}
-          />
-          <div className={styles.securityInner}>
-            <div className={styles.securityHeading} data-reveal>
-              <h2>Security that protects you. Intelligence that helps you.</h2>
-              <a className={styles.primaryButton} href="#security-panel">
-                Explore security
-                <Image
-                  src="/enta-website/enta-landing/cta-arrow.svg"
-                  loading="eager"
-                  alt=""
-                  width={20}
-                  height={20}
-                />
-              </a>
-            </div>
+        <EntaSecurityBand
+          exploreHref="#security-panel"
+          sectionId="security"
+          panelId="security-panel"
+          reveal
+        />
 
-            <div className={styles.securityPanel} id="security-panel" data-reveal>
-              <div className={styles.securityIllustration} aria-hidden="true" />
-              <div className={styles.securityBenefits}>
-                <article>
-                  <div className={styles.securityIcon}>
-                    <Image
-                      src="/enta-website/enta-landing/security-fingerprint.svg"
-                      loading="eager"
-                      alt=""
-                      width={40}
-                      height={40}
-                    />
-                  </div>
-                  <h3>Only you can get in</h3>
-                  <p>
-                    Use your passkey to access your account. If you lose your phone, you can
-                    recover it securely—without giving anyone else access.
-                  </p>
-                </article>
-
-                <article>
-                  <div className={styles.securityIcon}>
-                    <Image
-                      src="/enta-website/enta-landing/security-eyes.svg"
-                      loading="eager"
-                      alt=""
-                      width={40}
-                      height={40}
-                    />
-                  </div>
-                  <h3>A second look before you pay</h3>
-                  <p>
-                    We’ll highlight favourable rates and flag details worth checking, like
-                    an incorrect address or an unexpected fee. You always make the final
-                    call.
-                  </p>
-                </article>
-              </div>
-            </div>
-          </div>
-          <Image
-            className={styles.securityGridBottom}
-            src="/enta-website/enta-landing/security-grid-decoration.png"
-            loading="eager"
-            alt=""
-            width={1440}
-            height={70}
-          />
-        </section>
-
-        <section className={styles.faqSection}>
-          <div className={styles.faqInner}>
-            <h2 data-reveal>FAQs</h2>
-            <div className={styles.faqList} data-reveal>
-              {faqQuestions.map((question) => (
-                <div className={styles.faqRow} key={question}>
-                  <Image
-                    src="/enta-website/enta-landing/faq-chevron.png"
-                    loading="eager"
-                    alt=""
-                    width={14}
-                    height={6}
-                  />
-                  <h3>{question}</h3>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
+        <EntaFaqBand reveal />
       </main>
 
       <footer className={styles.footer} data-nav-dark="true">
@@ -610,7 +459,22 @@ export function EntaWebsitePage() {
                       </>
                     );
 
-                    return link.href ? (
+                    if (!link.href) {
+                      return <span key={link.label}>{content}</span>;
+                    }
+
+                    // A link to one of this site's own routes goes through
+                    // next/link, the way the nav above does, so the footer
+                    // changes page without reloading the document.
+                    if (!isExternal && link.href.startsWith("/")) {
+                      return (
+                        <Link href={link.href} key={link.label}>
+                          {content}
+                        </Link>
+                      );
+                    }
+
+                    return (
                       <a
                         href={link.href}
                         key={link.label}
@@ -619,8 +483,6 @@ export function EntaWebsitePage() {
                       >
                         {content}
                       </a>
-                    ) : (
-                      <span key={link.label}>{content}</span>
                     );
                   })}
                 </div>

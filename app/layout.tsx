@@ -34,7 +34,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    // globals.css sets scroll-behavior: smooth on <html> for the in-page
+    // anchors. data-scroll-behavior tells the router to suspend that while a
+    // route transition runs, so following a nav link from far down one page
+    // lands at the top of the next one instead of animating the whole way.
+    <html lang="en" data-scroll-behavior="smooth">
       <body>{children}</body>
     </html>
   );

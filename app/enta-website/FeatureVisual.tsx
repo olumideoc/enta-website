@@ -15,7 +15,11 @@ const FEATURE_MEDIA_VERSION = "1";
 /** webm plus mp4: the layer only gives up once neither one loads. */
 const SOURCE_COUNT = 2;
 
-function FeatureVisualLayer({
+/**
+ * One item's silent loop, stacked in a media frame and faded in while its item
+ * is open. Exported so another page's frame can stack loops the same way.
+ */
+export function FeatureVisualLayer({
   media,
   active,
 }: {
@@ -27,7 +31,7 @@ function FeatureVisualLayer({
   // A loop that has not been rendered yet leaves the layer transparent, so the
   // gradient underneath carries the frame instead of a blank box.
   const [failed, setFailed] = useState(false);
-  const stem = `/enta-website/enta-landing/${media.basename}-light`;
+  const stem = `/enta-website/${media.dir ?? "enta-landing"}/${media.basename}-light`;
 
   useEffect(() => {
     if (!active) return;
