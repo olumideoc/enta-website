@@ -1,0 +1,1019 @@
+/*
+  Helium design tokens used by this page.
+
+  The hero, the pill tabs, the two form-factor cards, the team list and the
+  four columns are the bands this page paints itself, and every colour in them
+  reads from one of the custom properties below. The light column is what Figma
+  frame 1:5530 specifies; the dark column is Helium's dark theme, taken from
+  @helium/tokens/src/generated/tokens.css ([data-theme='dark'], line 682 on; the
+  neutral theme further down that file is NOT the one Enta uses).
+
+  custom property         Helium token          light      dark
+  -------------------------------------------------------------------
+  --bus-text-primary      text-primary          #101828    #f5f5f6
+  --bus-text-secondary    text-secondary        #344054    #cecfd2
+  --bus-text-tertiary     text-tertiary         #475467    #94969c
+  --bus-text-white        text-white            #ffffff    #ffffff
+  --bus-bg-primary        bg-primary            #ffffff    #0c111d
+  --bus-bg-secondary      bg-secondary          #f9fafb    #161b26
+  --bus-bg-brand-solid    bg-brand-solid        #175cd3    #175cd3
+  --bus-border-brand      border-brand          #1570ef    #2e90fa
+  --bus-border-primary    border-primary        #d0d5dd    #333741
+  --bus-border-secondary  border-secondary      #e4e7ec    #1f242f
+  --bus-border-brand-alt  border-brand_alt      #175cd3    #333741
+
+  Figma also paints a few colours that sit between two Helium steps. They keep
+  the frame's exact light value and take the dark value of the nearest token.
+
+  custom property         where                 nearest token    light      dark
+  ---------------------------------------------------------------------------------
+  --bus-copy              hero and band copy    text-secondary   #31373d    #cecfd2
+  --bus-border-button     "Know more" border    border-primary   #cdd3db    #333741
+  --bus-bg-card           the pill tab card     bg-secondary     #f8f9fa    #161b26
+  --bus-bg-panel          the two glow panels   bg-secondary     #f7f7f9    #161b26
+  --bus-card-title        security point title  text-primary     #151517    #f5f5f6
+  --bus-card-body         security point body   text-tertiary    #535361    #94969c
+  --bus-tile-face         the 64px icon face    bg-tertiary      #ffffff    #1f242f
+  --bus-tile-wrap         the 76px icon halo    (raw alpha)      1d1d20/5%  fff/6%
+
+  --bus-cta-solid and --bus-cta-fg are the dark filled button at the foot of
+  each form-factor card. Figma binds its fill to bg-primary but draws #0c111d,
+  which is bg-primary's DARK value: the button is meant to be the inverse of
+  the page behind it rather than the page's own surface. So the pair swaps in
+  the dark theme, where a #0c111d button would sit invisible on a #0c111d page.
+
+  custom property         where                 light      dark
+  -------------------------------------------------------------------
+  --bus-cta-solid         card button fill      #0c111d    #f5f5f6
+  --bus-cta-fg            its label and caret   #ffffff    #0c111d
+
+  --bus-hero-veil is the pair of washes over the sky behind the hero. It is not
+  a Helium colour: it is white in the light theme and bg-primary (#0c111d) in
+  the dark one, so the hero copy keeps its contrast either way. The individual
+  and security heroes use the same pair.
+
+  Not tokenised on purpose: the green check beside a card bullet is a two-tone
+  exported asset (its #079455 disc is bg-success-solid, which Helium keeps
+  identical in both themes), the colour wheel behind each panel is a fixed
+  pastel gradient the designer drew, and the wash behind each form-factor card
+  is the frame's own fill, recovered from its render (see businessData.ts).
+
+  The three bands under the four columns are the landing page's components, and
+  they paint through the --band-*, --feature-* and --button-* hooks their
+  stylesheet declares. The .main block near the bottom of this file points
+  those hooks at the tokens above, and the --pill-* and --tile-* blocks below
+  do the same for ../pill-tabs.module.css and ../icon-tile.module.css.
+*/
+
+.businessPage {
+  --bus-text-primary: #101828;
+  --bus-text-secondary: #344054;
+  --bus-text-tertiary: #475467;
+  --bus-text-white: #fff;
+  --bus-bg-primary: #fff;
+  --bus-bg-secondary: #f9fafb;
+  --bus-bg-brand-solid: #175cd3;
+  --bus-border-brand: #1570ef;
+  --bus-border-primary: #d0d5dd;
+  --bus-border-secondary: #e4e7ec;
+  --bus-border-brand-alt: #175cd3;
+  --bus-copy: #31373d;
+  --bus-border-button: #cdd3db;
+  --bus-bg-card: #f8f9fa;
+  --bus-bg-panel: #f7f7f9;
+  --bus-card-title: #151517;
+  --bus-card-body: #535361;
+  --bus-tile-face: #fff;
+  --bus-tile-wrap: rgba(29, 29, 32, .05);
+  --bus-cta-solid: #0c111d;
+  --bus-cta-fg: #fff;
+  --bus-hero-veil:
+    radial-gradient(circle at 30% 46%, rgba(255, 255, 255, .58), rgba(255, 255, 255, .16) 58%),
+    linear-gradient(180deg, rgba(255, 255, 255, .28), rgba(255, 255, 255, .46));
+
+  /* ../pill-tabs.module.css, in this page's palette. The lengths are the
+     measurements the business frames differ from the individual ones on: a
+     690px heading, no fixed offset above the panel's tail because these panels
+     end in a button pinned to the bottom rather than a bullet block, and -1.5%
+     on the panel paragraph, which is the tracking the rest of that card is
+     drawn at and what holds the paragraph to the three lines of 1:5575.
+
+     An unselected pill is drawn in text-primary here, not the quieter step the
+     individual frame uses: sampling 1:5558 gives #101828 for both the label
+     and the glyph, on a #d0d5dd border. That leaves the hover with no colour
+     left to move to, so it follows Helium's own outlined button instead, which
+     holds its border and its label and lifts the surface one step. */
+  --pill-heading-width: 690px;
+  --pill-heading: var(--bus-text-primary);
+  --pill-idle-border: var(--bus-border-primary);
+  --pill-idle-fg: var(--bus-text-primary);
+  --pill-idle-hover-border: var(--bus-border-primary);
+  --pill-idle-hover-fg: var(--bus-text-primary);
+  --pill-idle-hover-bg: var(--bus-bg-secondary);
+  --pill-body-tracking: -.27px;
+  --pill-selected-border: var(--bus-border-brand);
+  --pill-selected-bg: var(--bus-bg-brand-solid);
+  --pill-selected-fg: var(--bus-text-white);
+  --pill-card-bg: var(--bus-bg-card);
+  --pill-panel-bg: var(--bus-bg-panel);
+  --pill-title: var(--bus-text-primary);
+  --pill-body: var(--bus-text-secondary);
+  --pill-point: var(--bus-text-secondary);
+  --pill-focus: var(--bus-bg-brand-solid);
+  --pill-action-border: var(--bus-border-button);
+  --pill-action-fg: var(--bus-copy);
+  --pill-action-hover-border: var(--bus-text-primary);
+  --pill-action-hover-bg: var(--bus-bg-primary);
+  --pill-action-hover-fg: var(--bus-text-primary);
+
+  /* ../icon-tile.module.css, for the four columns. */
+  --tile-wrap: var(--bus-tile-wrap);
+  --tile-face: var(--bus-tile-face);
+  --tile-glyph: var(--bus-text-primary);
+}
+
+:global([data-theme="dark"]) .businessPage {
+  color-scheme: dark;
+  --bus-text-primary: #f5f5f6;
+  --bus-text-secondary: #cecfd2;
+  --bus-text-tertiary: #94969c;
+  --bus-text-white: #fff;
+  --bus-bg-primary: #0c111d;
+  --bus-bg-secondary: #161b26;
+  --bus-bg-brand-solid: #175cd3;
+  --bus-border-brand: #2e90fa;
+  --bus-border-primary: #333741;
+  --bus-border-secondary: #1f242f;
+  --bus-border-brand-alt: #333741;
+  --bus-copy: #cecfd2;
+  --bus-border-button: #333741;
+  --bus-bg-card: #161b26;
+  --bus-bg-panel: #161b26;
+  --bus-card-title: #f5f5f6;
+  --bus-card-body: #94969c;
+  --bus-tile-face: #1f242f;
+  --bus-tile-wrap: rgba(255, 255, 255, .06);
+  --bus-cta-solid: #f5f5f6;
+  --bus-cta-fg: #0c111d;
+  --bus-hero-veil:
+    radial-gradient(circle at 30% 46%, rgba(12, 17, 29, .66), rgba(12, 17, 29, .3) 58%),
+    linear-gradient(180deg, rgba(12, 17, 29, .44), rgba(12, 17, 29, .66));
+}
+
+.skipLink {
+  position: fixed;
+  z-index: 500;
+  top: 12px;
+  left: 12px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: var(--bus-text-primary);
+  color: var(--bus-bg-primary) !important;
+  font-size: 14px;
+  font-weight: 600;
+  transform: translateY(-180%);
+  transition: transform 160ms cubic-bezier(.16, 1, .3, 1);
+}
+
+.skipLink:focus {
+  transform: translateY(0);
+}
+
+.main:focus {
+  outline: none;
+}
+
+.businessPage a:focus-visible,
+.businessPage button:focus-visible {
+  outline: 2px solid var(--bus-bg-brand-solid);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* An exported single-colour glyph, painted through the text colour. */
+.maskIcon {
+  display: block;
+  flex: 0 0 auto;
+  background: currentcolor;
+  -webkit-mask: var(--bus-glyph) center / contain no-repeat;
+  mask: var(--bus-glyph) center / contain no-repeat;
+}
+
+/*
+  Hero.
+
+  Figma draws a plain white hero starting under a 64px header band, with 80px
+  of padding inside it. The header on this site floats over the page instead,
+  so the top padding is 144px (64 + 80) and the sky loop the other secondary
+  pages use runs behind the copy. 546px is where Figma's hero band ends.
+*/
+.hero {
+  position: relative;
+  height: 546px;
+  padding: 144px 142px 80px;
+  overflow: hidden;
+  background: var(--bus-bg-primary);
+  isolation: isolate;
+}
+
+.heroMedia {
+  position: absolute;
+  z-index: 0;
+  inset: 72px 0 0;
+  overflow: hidden;
+  background: #dceaf4 url("/enta-website/changelog/sky-poster.jpg") center 30% / cover no-repeat;
+  pointer-events: none;
+}
+
+.heroMedia::after {
+  position: absolute;
+  z-index: 1;
+  content: "";
+  inset: 0;
+  background: var(--bus-hero-veil);
+}
+
+.heroVideo {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 30%;
+}
+
+.heroRail {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  width: 849px;
+  max-width: 100%;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 40px;
+}
+
+.heroCopy {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 32px;
+}
+
+.heroCopy h1 {
+  width: 100%;
+  color: var(--bus-text-primary);
+  font-size: 64px;
+  font-weight: 700;
+  letter-spacing: -2px;
+  line-height: 1.1;
+  opacity: .9;
+}
+
+.heroCopy p {
+  width: 100%;
+  color: var(--bus-copy);
+  font-size: 20px;
+  font-weight: 500;
+  letter-spacing: -.3px;
+  line-height: 30px;
+}
+
+.heroActions {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+/* Figma's two buttons: 130x50 filled, 127x50 outlined, both 16px copy. */
+.heroActions > a {
+  width: 130px;
+  height: 50px;
+  min-height: 50px;
+  padding: 12px 16px;
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: -.2px;
+  line-height: 24px;
+}
+
+.heroActions > .secondaryButton {
+  width: 127px;
+}
+
+/*
+  Prefixed with the page class so the colour beats the landing stylesheet's
+  `.page a { color: inherit }`, which is a class plus a type and would otherwise
+  win over a bare class here.
+*/
+.businessPage .secondaryButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--bus-border-button);
+  border-radius: 12px;
+  background: transparent;
+  color: var(--bus-copy);
+  transition:
+    border-color 200ms ease,
+    background-color 200ms ease,
+    color 200ms ease,
+    transform 200ms ease;
+}
+
+.businessPage .secondaryButton:hover {
+  border-color: var(--bus-text-primary);
+  background: var(--bus-bg-primary);
+  color: var(--bus-text-primary);
+  transform: translateY(-1px);
+}
+
+/*
+  The intelligence watches. You decide. The rails execute.
+
+  The heading, the pills and the card inside this band are ../PillTabs, shared
+  with the individual page, so their geometry lives in ../pill-tabs.module.css
+  and this page owns only the band around them plus the --pill-* block above.
+*/
+.waysSection {
+  padding: 80px 142px;
+  background: var(--bus-bg-primary);
+  scroll-margin-top: 88px;
+}
+
+/* Two form factors, powerful possibilities */
+.formFactorsSection {
+  padding: 80px 142px;
+  background: var(--bus-bg-primary);
+}
+
+.formFactorsInner {
+  display: flex;
+  width: 100%;
+  max-width: 1156px;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 auto;
+  gap: 48px;
+}
+
+.formFactorsInner > h2 {
+  width: 690px;
+  max-width: 100%;
+  color: var(--bus-text-primary);
+  font-size: 40px;
+  font-weight: 700;
+  letter-spacing: -1.7px;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.formFactorCards {
+  display: flex;
+  width: 100%;
+  align-items: stretch;
+  gap: 48px;
+}
+
+/*
+  Figma's card: 554 wide inside the 1156 column, 503 tall, 33.206px of padding
+  and a 16px radius, with the copy at the top and the button pushed to the
+  bottom. The card carries no fill of its own: the pale wash is the frame's own
+  image fill, drawn at the same 20% the frame draws it at.
+
+  503 is a minimum rather than a fixed height. At 1440 the copy is shorter than
+  that and space-between pushes the button down onto the bottom padding exactly
+  as the frame draws it. Between 992 and 1199 the cards are still side by side
+  while the card narrows to about 424, the body takes an extra line or two, and
+  a fixed height would post that overflow straight under the card's own
+  overflow: hidden - taking the button with it, because space-between packs
+  from the start once the free space turns negative.
+*/
+.formFactorCard {
+  position: relative;
+  display: flex;
+  min-height: 503px;
+  flex: 1 1 0;
+  min-width: 0;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 33.206px;
+  overflow: hidden;
+  border-radius: 16px;
+}
+
+.formFactorWash {
+  position: absolute;
+  z-index: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  inset: 0;
+  border-radius: 16px;
+  /* Stretched rather than cropped, which is what the frame does with it: the
+     wash is a smooth gradient, so a card of any shape gets the whole thing. */
+  object-fit: fill;
+  opacity: .2;
+  pointer-events: none;
+}
+
+.formFactorBody {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 40px;
+}
+
+.formFactorHead {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  text-align: center;
+}
+
+.formFactorEyebrow {
+  color: var(--bus-text-secondary);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -.56px;
+  line-height: 1.4;
+}
+
+.formFactorCopy {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: flex-start;
+  padding-inline: 40px;
+  gap: 16px;
+}
+
+.formFactorCopy h3 {
+  width: 100%;
+  color: var(--bus-text-primary);
+  font-size: 32px;
+  font-weight: 600;
+  letter-spacing: -1.28px;
+  line-height: 1.3;
+}
+
+.formFactorCopy p {
+  width: 100%;
+  color: var(--bus-text-secondary);
+  font-size: 18px;
+  font-weight: 400;
+  letter-spacing: -.72px;
+  line-height: 1.4;
+  white-space: pre-wrap;
+}
+
+/* Figma insets the rule 40px on both sides, the same as the blocks above and
+   below it, rather than running it to the card's padding. */
+.formFactorRule {
+  height: 1px;
+  align-self: stretch;
+  margin-inline: 40px;
+  background: var(--bus-border-secondary);
+}
+
+.formFactorPoints {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: flex-start;
+  margin: 0;
+  padding: 0 40px;
+  gap: 16px;
+  list-style: none;
+}
+
+.formFactorPoints li {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  color: var(--bus-text-secondary);
+  font-size: 16px;
+  font-weight: 400;
+  letter-spacing: -.24px;
+  line-height: 1.4;
+}
+
+.formFactorPoints img {
+  display: block;
+  width: 20px;
+  height: 20px;
+  flex: 0 0 auto;
+}
+
+/* Figma sets the dagger after "Powered by Pulse" a size smaller than the line
+   it sits on, and raises it clear of the baseline: in the frame its top lands
+   on the cap height of the words beside it, which is 4.13px up from where a
+   baseline-aligned 10.32px mark would sit. */
+.formFactorDagger {
+  font-size: 10.32px;
+  vertical-align: .4em;
+}
+
+.formFactorFoot {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  padding-inline: 40px;
+}
+
+/*
+  The spacing is the fractional Helium spacing Figma exports for this button,
+  the same set the landing page's audience cards carry: 9.962/14.943 of
+  padding, a 9.962 radius, a 4.981 gap and the 16.6029px CaretRight that the
+  exported asset is drawn at. The frame's own render of 1:5588 backs each of
+  them - the button comes out 44.9 tall and 407.6 wide, its corner turns over
+  about 10px, and the caret's ink measures 6x11, which is the 16.603 glyph and
+  not a 20px one.
+
+  The type is the one value that was wrong: it was carried over from the
+  landing card, which draws its label a scale step smaller. Measured off the
+  same render, the label's ink runs 117px and its cap stands 12px, and this
+  font sets "Start collecting" at 117.1px of ink with a 12.1px cap at 16px and
+  at 121.5/12.6 at 16.603, so the label is 16px. Its horizontal placement
+  agrees: at 16px the centred label starts 207.6px into the card against the
+  207 the render draws, where 16.603 would start it at 205.4.
+
+  min-height is Figma's exported height for the button, which a 16/24 line box
+  inside 9.962 of padding falls 1px short of. Setting it as a minimum rather
+  than a height also lets the label wrap at narrow widths instead of spilling.
+*/
+.businessPage .formFactorCta {
+  display: flex;
+  width: 100%;
+  min-height: 44.923px;
+  align-items: center;
+  justify-content: center;
+  padding: 9.962px 14.943px;
+  border-radius: 9.962px;
+  background: var(--bus-cta-solid);
+  color: var(--bus-cta-fg);
+  gap: 4.981px;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 24px;
+  transition:
+    box-shadow 200ms ease,
+    filter 200ms ease,
+    transform 200ms ease;
+}
+
+.businessPage .formFactorCta:hover {
+  filter: brightness(1.06);
+  box-shadow: 0 8px 20px rgba(16, 24, 40, .16);
+  transform: translateY(-2px);
+}
+
+.formFactorCta > .maskIcon {
+  width: 16.603px;
+  height: 16.603px;
+}
+
+/* Your whole team, one account and no one person moves the money */
+.teamSection {
+  padding: 140px 142px;
+  background: var(--bus-bg-primary);
+}
+
+.teamInner {
+  display: flex;
+  width: 100%;
+  max-width: 1156px;
+  flex-direction: column;
+  align-items: flex-start;
+  margin: 0 auto;
+  gap: 80px;
+}
+
+.teamHeading {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 40px;
+}
+
+.teamHeading h2 {
+  width: 650px;
+  max-width: 100%;
+  color: var(--bus-text-primary);
+  font-size: 40px;
+  font-weight: 700;
+  letter-spacing: -1.7px;
+  line-height: 1.2;
+}
+
+.teamHeading p {
+  width: 690px;
+  max-width: 100%;
+  color: var(--bus-copy);
+  font-size: 20px;
+  font-weight: 500;
+  letter-spacing: -.3px;
+  line-height: 30px;
+}
+
+/*
+  The rows themselves are ../FeatureAccordion, the same list the landing page's
+  send / buy / hold band runs: one row open at a time, a progress line under
+  the open row, and autoplay that pauses on hover, on keyboard focus and off
+  screen. The column around it is the landing stylesheet's own .featureList, so
+  the 351.22px width and the 130x50 button 48px below it come with it.
+*/
+.teamBody {
+  display: flex;
+  width: 100%;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.teamVisual {
+  position: relative;
+  width: 700px;
+  height: 400px;
+  flex: 0 0 auto;
+  overflow: hidden;
+  border-radius: 16px;
+  background: var(--bus-bg-panel);
+}
+
+/*
+  Figma's glow: a 928px colour wheel, blurred by 32px and turned 155.98deg
+  inside a 1225px square window centred on the 700x400 panel. Every length is a
+  percentage of the panel, so the construction keeps its place once the panel
+  goes fluid below 1200px. The pill tab panels use the same construction at
+  their own size; theirs lives in ../pill-tabs.module.css.
+*/
+.teamGlow {
+  position: absolute;
+  top: -26.4225%;
+  right: -36.8143%;
+  left: -38.2414%;
+  display: flex;
+  height: 306.348%;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.teamGlow > span {
+  display: block;
+  width: 75.7229%;
+  height: 75.7229%;
+  background: url("/enta-website/business/team-panel-glow.svg") 0 0 / 100% 100% no-repeat;
+  filter: blur(32px);
+  transform: rotate(155.98deg);
+}
+
+/* What Enta gives that the old way can't */
+.columnsSection {
+  padding: 140px 142px;
+  background: var(--bus-bg-secondary);
+}
+
+.columnsInner {
+  display: flex;
+  width: 100%;
+  max-width: 1156px;
+  flex-direction: column;
+  align-items: flex-start;
+  margin: 0 auto;
+  gap: 80px;
+}
+
+.columnsHeading {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 40px;
+}
+
+.columnsHeading h2 {
+  width: 861px;
+  max-width: 100%;
+  color: var(--bus-text-primary);
+  font-size: 40px;
+  font-weight: 700;
+  letter-spacing: -1.7px;
+  line-height: 1.1;
+}
+
+.columnsHeading p {
+  width: 690px;
+  max-width: 100%;
+  color: var(--bus-copy);
+  font-size: 20px;
+  font-weight: 500;
+  letter-spacing: -.3px;
+  line-height: 30px;
+}
+
+/*
+  Figma draws a bare 32px glyph over each column. The tile from
+  ../icon-tile.module.css is used instead, so these four icons match every other
+  icon on the site; it stands 44px taller than the glyph does.
+*/
+.columnsGrid {
+  display: grid;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  gap: 48px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  list-style: none;
+}
+
+.columnsGrid > li {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.columnsGrid h3 {
+  color: var(--bus-text-primary);
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -.16px;
+  line-height: 1.5;
+}
+
+.columnsGrid p {
+  color: var(--bus-text-tertiary);
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: -.16px;
+  line-height: 1.5;
+}
+
+/*
+  The landing-page bands under the four columns.
+
+  Their stylesheet reads every colour it paints through a hook with its own
+  literal as the fallback, so the landing page is untouched and this block
+  points the hooks at the tokens at the top of this file. The same mechanism
+  the individual page uses.
+
+  Declared on .main rather than on the page root so the header keeps the button
+  colours it has everywhere else on the site. Every value below resolves to the
+  landing page's own literal in the light theme, so the light rendering of the
+  bands is unchanged; only the dark column moves.
+*/
+.main {
+  --band-bg-primary: var(--bus-bg-primary);
+  --band-bg-secondary: var(--bus-bg-secondary);
+  --band-heading: var(--bus-text-primary);
+  --band-body: var(--bus-copy);
+  --band-panel: var(--bus-bg-panel);
+  --band-card: var(--bus-bg-card);
+  --band-card-title: var(--bus-card-title);
+  --band-card-body: var(--bus-card-body);
+  --band-tile-wrap: var(--bus-tile-wrap);
+  --band-tile-face: var(--bus-tile-face);
+  --band-rule: var(--bus-border-secondary);
+  --feature-rule: var(--bus-border-secondary);
+  --feature-title: var(--bus-text-primary);
+  --feature-body: var(--bus-text-tertiary);
+  --feature-accent: var(--bus-bg-brand-solid);
+  --button-border: var(--bus-border-brand-alt);
+  --button-bg: var(--bus-bg-brand-solid);
+}
+
+/*
+  The security band's two exported images, treated rather than recoloured
+  because their colours are baked in. Same three hooks the individual page
+  sets, for the same reasons.
+*/
+:global([data-theme="dark"]) .main {
+  --band-grid-filter: invert(1);
+  --band-grid-blend: screen;
+  --band-glyph-filter: brightness(0) invert(1);
+}
+
+/* Responsive layout */
+@media (max-width: 1199px) {
+  .hero {
+    height: auto;
+    padding: 128px 48px 88px;
+  }
+
+  .heroRail {
+    width: 100%;
+  }
+
+  .heroCopy h1 {
+    font-size: 56px;
+    letter-spacing: -1.6px;
+    line-height: 1.08;
+  }
+
+  .waysSection,
+  .formFactorsSection {
+    padding: 88px 48px;
+  }
+
+  .teamSection,
+  .columnsSection {
+    padding: 112px 48px;
+  }
+
+  .teamBody {
+    gap: 56px;
+  }
+
+  .teamVisual {
+    width: auto;
+    height: auto;
+    flex: 1 1 0;
+    min-width: 0;
+    aspect-ratio: 7 / 4;
+  }
+
+  .columnsGrid {
+    gap: 40px;
+  }
+}
+
+@media (max-width: 991px) {
+  .hero {
+    padding: 120px 20px 72px;
+  }
+
+  .waysSection,
+  .formFactorsSection {
+    padding: 80px 20px;
+  }
+
+  .teamSection,
+  .columnsSection {
+    padding: 96px 20px;
+  }
+
+  .formFactorsInner,
+  .teamInner,
+  .columnsInner {
+    gap: 56px;
+  }
+
+  .formFactorCards {
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  /*
+    Stacked, each card is as tall as its own copy rather than the pair's. The
+    flex shorthand has to go with the height: in a column the 0 basis is a
+    height, so a card that keeps it collapses to nothing behind its own
+    overflow: hidden.
+  */
+  .formFactorCard {
+    width: 100%;
+    min-height: 0;
+    flex: none;
+    gap: 40px;
+  }
+
+  .teamBody {
+    flex-direction: column;
+    gap: 56px;
+  }
+
+  .teamVisual {
+    width: 100%;
+    flex: none;
+  }
+
+  .columnsGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 809px) {
+  .formFactorCopy,
+  .formFactorPoints,
+  .formFactorFoot {
+    padding-inline: 0;
+  }
+
+  .formFactorRule {
+    margin-inline: 0;
+  }
+}
+
+@media (max-width: 767px) {
+  .hero {
+    padding: 108px 20px 64px;
+  }
+
+  .heroCopy {
+    gap: 24px;
+  }
+
+  .heroCopy h1 {
+    font-size: 40px;
+    letter-spacing: -1.2px;
+    line-height: 1.1;
+  }
+
+  .heroCopy p {
+    font-size: 17px;
+    line-height: 26px;
+  }
+
+  .heroActions {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .waysSection,
+  .formFactorsSection,
+  .teamSection,
+  .columnsSection {
+    padding: 72px 20px;
+  }
+
+  .formFactorsInner > h2,
+  .teamHeading h2,
+  .columnsHeading h2 {
+    font-size: 34px;
+    letter-spacing: -1.2px;
+    line-height: 1.16;
+  }
+
+  .teamHeading p,
+  .columnsHeading p {
+    font-size: 17px;
+    line-height: 26px;
+  }
+
+  .formFactorCard {
+    padding: 28px 24px;
+  }
+
+  .formFactorCopy h3 {
+    font-size: 26px;
+    letter-spacing: -.9px;
+  }
+
+  .formFactorCopy p {
+    font-size: 17px;
+    letter-spacing: -.4px;
+  }
+
+  .columnsGrid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 32px;
+  }
+}
+
+@media (max-width: 479px) {
+  .heroCopy h1 {
+    font-size: 34px;
+    letter-spacing: -1px;
+  }
+
+  .heroActions > a,
+  .heroActions > .secondaryButton {
+    width: 100%;
+  }
+
+  .formFactorsInner > h2,
+  .teamHeading h2,
+  .columnsHeading h2 {
+    font-size: 30px;
+    letter-spacing: -1px;
+  }
+
+  .formFactorCopy h3 {
+    font-size: 24px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /*
+    Page-prefixed for the same reason the rules above are: .secondaryButton and
+    .formFactorCta are themselves prefixed, so an unprefixed selector here
+    would lose to them and the transitions would survive the preference.
+  */
+  .businessPage .skipLink,
+  .businessPage .secondaryButton,
+  .businessPage .formFactorCta {
+    transition: none;
+  }
+
+  .heroVideo {
+    display: none;
+  }
+}
