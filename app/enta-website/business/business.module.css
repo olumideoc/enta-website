@@ -1,60 +1,61 @@
 /*
   Helium design tokens used by this page.
 
-  The hero, the pill tabs, the two form-factor cards, the team list and the
-  four columns are the bands this page paints itself, and every colour in them
-  reads from one of the custom properties below. The light column is what Figma
-  frame 1:5530 specifies; the dark column is Helium's dark theme, taken from
-  @helium/tokens/src/generated/tokens.css ([data-theme='dark'], line 682 on; the
-  neutral theme further down that file is NOT the one Enta uses).
+  Enta for Business has its own theme in Helium. Where the rest of the site
+  runs on the default blue brand, this page runs on business-light and
+  business-dark, whose brand step is a near-black rather than #175cd3. Both
+  blocks live in @helium/tokens/src/generated/tokens.css: business-light at
+  line 995 and business-dark at line 1308. Figma frame 1:5530 was rethemed to
+  match on 2026-09-04, and its variable defs report those values.
+
+  (An earlier note in this file called those blocks a "neutral theme" that Enta
+  does not use. That was wrong: they are the Business theme, and this page is
+  what they are for. The other pages stay on the default and dark blocks.)
 
   custom property         Helium token          light      dark
   -------------------------------------------------------------------
-  --bus-text-primary      text-primary          #101828    #f5f5f6
-  --bus-text-secondary    text-secondary        #344054    #cecfd2
-  --bus-text-tertiary     text-tertiary         #475467    #94969c
+  --bus-text-primary      text-primary          #171717    #fafafa
+  --bus-text-secondary    text-secondary        #404040    #d4d4d4
+  --bus-text-tertiary     text-tertiary         #525252    #a3a3a3
   --bus-text-white        text-white            #ffffff    #ffffff
-  --bus-bg-primary        bg-primary            #ffffff    #0c111d
-  --bus-bg-secondary      bg-secondary          #f9fafb    #161b26
-  --bus-bg-brand-solid    bg-brand-solid        #175cd3    #175cd3
-  --bus-border-brand      border-brand          #1570ef    #2e90fa
-  --bus-border-primary    border-primary        #d0d5dd    #333741
-  --bus-border-secondary  border-secondary      #e4e7ec    #1f242f
-  --bus-border-brand-alt  border-brand_alt      #175cd3    #333741
+  --bus-bg-primary        bg-primary            #ffffff    #0a0a0a
+  --bus-bg-secondary      bg-secondary          #fafafa    #171717
+  --bus-bg-brand-solid    bg-brand-solid        #171717    #404040
+  --bus-border-brand      border-brand          #171717    #525252
+  --bus-border-primary    border-primary        #d4d4d4    #404040
+  --bus-border-secondary  border-secondary      #e5e5e5    #262626
+  --bus-border-brand-alt  border-brand_alt      #404040    #525252
 
-  Figma also paints a few colours that sit between two Helium steps. They keep
-  the frame's exact light value and take the dark value of the nearest token.
+  These few sit between two steps of the theme, so each takes the nearest one.
 
   custom property         where                 nearest token    light      dark
   ---------------------------------------------------------------------------------
-  --bus-copy              hero and band copy    text-secondary   #31373d    #cecfd2
-  --bus-border-button     "Know more" border    border-primary   #cdd3db    #333741
-  --bus-bg-card           the pill tab card     bg-secondary     #f8f9fa    #161b26
-  --bus-bg-panel          the two glow panels   bg-secondary     #f7f7f9    #161b26
-  --bus-card-title        security point title  text-primary     #151517    #f5f5f6
-  --bus-card-body         security point body   text-tertiary    #535361    #94969c
-  --bus-tile-face         the 64px icon face    bg-tertiary      #ffffff    #1f242f
+  --bus-copy              hero and band copy    text-secondary   #404040    #d4d4d4
+  --bus-border-button     "Know more" border    border-primary   #d4d4d4    #404040
+  --bus-bg-card           the pill tab card     bg-secondary     #fafafa    #171717
+  --bus-bg-panel          the two glow panels   bg-tertiary      #f5f5f5    #262626
+  --bus-card-title        security point title  text-primary     #171717    #fafafa
+  --bus-card-body         security point body   text-tertiary    #525252    #a3a3a3
+  --bus-tile-face         the 64px icon face    bg-primary       #ffffff    #262626
   --bus-tile-wrap         the 76px icon halo    (raw alpha)      1d1d20/5%  fff/6%
 
   --bus-cta-solid and --bus-cta-fg are the dark filled button at the foot of
-  each form-factor card. Figma binds its fill to bg-primary but draws #0c111d,
-  which is bg-primary's DARK value: the button is meant to be the inverse of
-  the page behind it rather than the page's own surface. So the pair swaps in
-  the dark theme, where a #0c111d button would sit invisible on a #0c111d page.
+  each form-factor card. Under this theme the brand step is already that
+  near-black, so the button is simply bg-brand-solid with text-primary_on-brand
+  on it, and the selected pill is the same pair.
 
-  custom property         where                 light      dark
-  -------------------------------------------------------------------
-  --bus-cta-solid         card button fill      #0c111d    #f5f5f6
-  --bus-cta-fg            its label and caret   #ffffff    #0c111d
+  custom property         where                 Helium token             light      dark
+  -----------------------------------------------------------------------------------------
+  --bus-cta-solid         card button fill      bg-brand-solid           #171717    #404040
+  --bus-cta-fg            its label and caret   text-primary_on-brand    #fafafa    #fafafa
 
   --bus-hero-veil is the pair of washes over the sky behind the hero. It is not
-  a Helium colour: it is white in the light theme and bg-primary (#0c111d) in
-  the dark one, so the hero copy keeps its contrast either way. The individual
-  and security heroes use the same pair.
+  a Helium colour: it is white in the light theme and bg-primary (#0a0a0a) in
+  the dark one, so the hero copy keeps its contrast either way.
 
   Not tokenised on purpose: the green check beside a card bullet is a two-tone
   exported asset (its #079455 disc is bg-success-solid, which Helium keeps
-  identical in both themes), the colour wheel behind each panel is a fixed
+  identical in every theme), the colour wheel behind each panel is a fixed
   pastel gradient the designer drew, and the wash behind each form-factor card
   is the frame's own fill, recovered from its render (see businessData.ts).
 
@@ -66,27 +67,38 @@
 */
 
 .businessPage {
-  --bus-text-primary: #101828;
-  --bus-text-secondary: #344054;
-  --bus-text-tertiary: #475467;
+  /* The header sits outside .main, so the button and the active nav rule take
+     the theme here at the page root; every other page leaves them at the
+     landing blue their own fallbacks carry. */
+  --nav-active: var(--bus-bg-brand-solid);
+  /* The mark is Enta blue and the wordmark near-black, and this theme's brand
+     is one near-black, so the pair flattens to it: brightness(0) takes both to
+     black and invert(9%) lifts that to exactly rgb(23, 23, 23). */
+  --logo-filter: brightness(0) invert(9%);
+  --button-border: var(--bus-border-brand);
+  --button-bg: var(--bus-bg-brand-solid);
+  --button-fg: var(--bus-cta-fg);
+  --bus-text-primary: #171717;
+  --bus-text-secondary: #404040;
+  --bus-text-tertiary: #525252;
   --bus-text-white: #fff;
   --bus-bg-primary: #fff;
-  --bus-bg-secondary: #f9fafb;
-  --bus-bg-brand-solid: #175cd3;
-  --bus-border-brand: #1570ef;
-  --bus-border-primary: #d0d5dd;
-  --bus-border-secondary: #e4e7ec;
-  --bus-border-brand-alt: #175cd3;
-  --bus-copy: #31373d;
-  --bus-border-button: #cdd3db;
-  --bus-bg-card: #f8f9fa;
-  --bus-bg-panel: #f7f7f9;
-  --bus-card-title: #151517;
-  --bus-card-body: #535361;
+  --bus-bg-secondary: #fafafa;
+  --bus-bg-brand-solid: #171717;
+  --bus-border-brand: #171717;
+  --bus-border-primary: #d4d4d4;
+  --bus-border-secondary: #e5e5e5;
+  --bus-border-brand-alt: #404040;
+  --bus-copy: #404040;
+  --bus-border-button: #d4d4d4;
+  --bus-bg-card: #fafafa;
+  --bus-bg-panel: #f5f5f5;
+  --bus-card-title: #171717;
+  --bus-card-body: #525252;
   --bus-tile-face: #fff;
   --bus-tile-wrap: rgba(29, 29, 32, .05);
-  --bus-cta-solid: #0c111d;
-  --bus-cta-fg: #fff;
+  --bus-cta-solid: #171717;
+  --bus-cta-fg: #fafafa;
   --bus-hero-veil:
     radial-gradient(circle at 30% 46%, rgba(255, 255, 255, .58), rgba(255, 255, 255, .16) 58%),
     linear-gradient(180deg, rgba(255, 255, 255, .28), rgba(255, 255, 255, .46));
@@ -134,30 +146,30 @@
 
 :global([data-theme="dark"]) .businessPage {
   color-scheme: dark;
-  --bus-text-primary: #f5f5f6;
-  --bus-text-secondary: #cecfd2;
-  --bus-text-tertiary: #94969c;
+  --bus-text-primary: #fafafa;
+  --bus-text-secondary: #d4d4d4;
+  --bus-text-tertiary: #a3a3a3;
   --bus-text-white: #fff;
-  --bus-bg-primary: #0c111d;
-  --bus-bg-secondary: #161b26;
-  --bus-bg-brand-solid: #175cd3;
-  --bus-border-brand: #2e90fa;
-  --bus-border-primary: #333741;
-  --bus-border-secondary: #1f242f;
-  --bus-border-brand-alt: #333741;
-  --bus-copy: #cecfd2;
-  --bus-border-button: #333741;
-  --bus-bg-card: #161b26;
-  --bus-bg-panel: #161b26;
-  --bus-card-title: #f5f5f6;
-  --bus-card-body: #94969c;
-  --bus-tile-face: #1f242f;
+  --bus-bg-primary: #0a0a0a;
+  --bus-bg-secondary: #171717;
+  --bus-bg-brand-solid: #404040;
+  --bus-border-brand: #525252;
+  --bus-border-primary: #404040;
+  --bus-border-secondary: #262626;
+  --bus-border-brand-alt: #525252;
+  --bus-copy: #d4d4d4;
+  --bus-border-button: #404040;
+  --bus-bg-card: #171717;
+  --bus-bg-panel: #262626;
+  --bus-card-title: #fafafa;
+  --bus-card-body: #a3a3a3;
+  --bus-tile-face: #262626;
   --bus-tile-wrap: rgba(255, 255, 255, .06);
-  --bus-cta-solid: #f5f5f6;
-  --bus-cta-fg: #0c111d;
+  --bus-cta-solid: #404040;
+  --bus-cta-fg: #fafafa;
   --bus-hero-veil:
-    radial-gradient(circle at 30% 46%, rgba(12, 17, 29, .66), rgba(12, 17, 29, .3) 58%),
-    linear-gradient(180deg, rgba(12, 17, 29, .44), rgba(12, 17, 29, .66));
+    radial-gradient(circle at 30% 46%, rgba(10, 10, 10, .66), rgba(10, 10, 10, .3) 58%),
+    linear-gradient(180deg, rgba(10, 10, 10, .44), rgba(10, 10, 10, .66));
 }
 
 .skipLink {
@@ -789,6 +801,7 @@
   --feature-accent: var(--bus-bg-brand-solid);
   --button-border: var(--bus-border-brand-alt);
   --button-bg: var(--bus-bg-brand-solid);
+  --button-fg: var(--bus-cta-fg);
 }
 
 /*
