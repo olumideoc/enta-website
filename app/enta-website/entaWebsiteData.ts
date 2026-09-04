@@ -183,29 +183,28 @@ export const footerSocialLinks = [
   },
 ] as const;
 
+/*
+  Real customer testimonials, supplied by the team on 2026-09-04 and reproduced
+  word for word. Do not edit these to fit the site's copy voice: they are what
+  the customers actually said.
+*/
 export const customerReviews = [
   {
-    name: "Abena Owusu",
-    descriptor: "Freelance video editor, Kumasi",
+    name: "Reni Abina",
+    descriptor: "Founder and Creative Director, Rendoll",
     quote:
-      "I edit for a studio in Austin and they pay me in US dollars. Most of it stays in Enta now and I change to cedis a bit at a time, as I need it.",
+      "Managing FX used to be one of the things that constantly slowed us down. Since we started using Enta by Shiga, that entire process has become seamless. We convert Naira into foreign currencies for supplier payments regularly, and it has always been fast, transparent and reliable. I genuinely wish we had started sooner.",
   },
   {
-    name: "Tunde Adewale",
-    descriptor: "Furniture importer, Lagos",
+    name: "Dipo O.",
+    descriptor: "Tropical Naturals Limited",
     quote:
-      "I import furniture fittings from Guangzhou. Paying the supplier was always a week of back and forth with my bank. Last month I sent it from Enta on a Tuesday afternoon and he confirmed it that same evening.",
+      "Enta by Shiga has been a breath of fresh air. Super-quick, reliable and traceable payments from a single legitimate source.",
   },
   {
-    name: "Brian Otieno",
-    descriptor: "University student, Nairobi",
+    name: "Deji Awoniyi",
+    descriptor: "Founder and CEO, MyPocketCounsel",
     quote:
-      "My aunt in the UK sends money for my fees every semester. Once it reaches my Enta I text her so she knows, then I pay the school from there.",
-  },
-  {
-    name: "Omar Mahmoud",
-    descriptor: "Accountant, Cairo",
-    quote:
-      "When I get paid I put part of my salary into Enta and buy gold. I keep the rest of my savings there too, so I was glad it opens with a passkey and not a password someone could guess.",
+      "Our hardest problem was never building product, it was moving our own money. Our US-raised investment had to fund Nigerian operations, and when our banking provider exited and closed our accounts, we were scrambling to pay local bills. Enta by Shiga gave us a reliable way to move funds in and consolidate revenue across the continent. It took a genuine operational risk off the table.",
   },
 ] as const;
