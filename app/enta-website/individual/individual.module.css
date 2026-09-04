@@ -163,7 +163,9 @@
 .heroMedia {
   position: absolute;
   z-index: 0;
-  inset: 72px 0 0;
+  /* Runs to the very top, the way the landing hero does, so the floating nav
+     sits on the sky rather than on a white strip. */
+  inset: 0;
   overflow: hidden;
   background: #dceaf4 url("/enta-website/changelog/sky-poster.jpg") center 30% / cover no-repeat;
   pointer-events: none;
