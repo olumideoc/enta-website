@@ -1,0 +1,971 @@
+/*
+  Helium design tokens used by this page.
+
+  Every colour on the security page reads from one of the custom properties
+  below, so switching the site to dark mode later is a matter of setting
+  data-theme="dark" on a wrapping element. The light column is what Figma
+  frame 1:5881 specifies; the dark column is Helium's dark theme, taken from
+  @helium/tokens/src/generated/tokens.css ([data-theme='dark'], line 682 on;
+  the neutral theme further down that file is NOT the one Enta uses).
+
+  custom property        Helium token                    light      dark
+  -------------------------------------------------------------------------
+  --sec-text-primary     text-primary                    #101828    #f5f5f6
+  --sec-text-secondary   text-secondary                  #344054    #cecfd2
+  --sec-text-tertiary    text-tertiary                   #475467    #94969c
+  --sec-icon-fg          featured-icon-light-fg-gray     #667085    #ececed
+  --sec-bg-primary       bg-primary                      #ffffff    #0c111d
+  --sec-bg-secondary     bg-secondary                    #f9fafb    #161b26
+  --sec-bg-brand-solid   bg-brand-solid                  #175cd3    #175cd3
+  --sec-border-secondary border-secondary                #e4e7ec    #1f242f
+  --sec-border-brand-alt border-brand_alt                #175cd3    #333741
+  --sec-error-fg         featured-icon-light-fg-error    #b42318    #fecdca
+  --sec-link-fg          button-tertiary-fg              #475467    #94969c
+
+  Figma also paints a few colours that sit between two Helium steps. They keep
+  the frame's exact light value and take the dark value of the nearest token.
+
+  custom property        where                  nearest token     light      dark
+  ----------------------------------------------------------------------------------
+  --sec-copy             section body copy      text-secondary    #31373d    #cecfd2
+  --sec-border-button    "Know more" border     border-primary    #cdd3db    #333741
+  --sec-bg-card          the two big cards      bg-secondary      #f8f9fa    #161b26
+  --sec-bg-panel         recovery panel         bg-secondary      #f7f7f9    #161b26
+  --sec-card-title       resource titles        text-primary      #151517    #f5f5f6
+  --sec-card-body        resource body copy     text-tertiary     #535361    #94969c
+  --sec-tile-face        resource icon tiles    bg-tertiary       #ffffff    #1f242f
+  --sec-tile-wrap        tile halo              (raw alpha)       1d1d20/5%  fff/6%
+
+  --sec-hero-veil is the pair of washes over the sky behind the hero. It is not
+  a Helium colour: it is white in the light theme and bg-primary (#0c111d) in
+  the dark one, so the hero copy keeps its contrast either way.
+
+  Not tokenised on purpose: the green check in "We do" is a two-tone exported
+  asset (its #079455 disc is bg-success-solid, which Helium keeps identical in
+  both themes), and the resource link arrow is painted in the label colour
+  where Figma's asset draws its body in text-primary.
+*/
+
+.securityPage {
+  --sec-text-primary: #101828;
+  --sec-text-secondary: #344054;
+  --sec-text-tertiary: #475467;
+  --sec-icon-fg: #667085;
+  --sec-bg-primary: #fff;
+  --sec-bg-secondary: #f9fafb;
+  --sec-bg-brand-solid: #175cd3;
+  --sec-border-secondary: #e4e7ec;
+  --sec-border-brand-alt: #175cd3;
+  --sec-error-fg: #b42318;
+  --sec-link-fg: #475467;
+  --sec-copy: #31373d;
+  --sec-border-button: #cdd3db;
+  --sec-bg-card: #f8f9fa;
+  --sec-bg-panel: #f7f7f9;
+  --sec-card-title: #151517;
+  --sec-card-body: #535361;
+  --sec-tile-wrap: rgba(29, 29, 32, .05);
+  --sec-tile-face: #fff;
+  --tile-wrap: var(--sec-tile-wrap);
+  --tile-face: var(--sec-tile-face);
+  --tile-glyph: var(--sec-text-primary);
+  --sec-hero-veil:
+    radial-gradient(circle at 30% 46%, rgba(255, 255, 255, .58), rgba(255, 255, 255, .16) 58%),
+    linear-gradient(180deg, rgba(255, 255, 255, .28), rgba(255, 255, 255, .46));
+}
+
+:global([data-theme="dark"]) .securityPage {
+  color-scheme: dark;
+  --sec-text-primary: #f5f5f6;
+  --sec-text-secondary: #cecfd2;
+  --sec-text-tertiary: #94969c;
+  --sec-icon-fg: #ececed;
+  --sec-bg-primary: #0c111d;
+  --sec-bg-secondary: #161b26;
+  --sec-bg-brand-solid: #175cd3;
+  --sec-border-secondary: #1f242f;
+  --sec-border-brand-alt: #333741;
+  --sec-error-fg: #fecdca;
+  --sec-link-fg: #94969c;
+  --sec-copy: #cecfd2;
+  --sec-border-button: #333741;
+  --sec-bg-card: #161b26;
+  --sec-bg-panel: #161b26;
+  --sec-card-title: #f5f5f6;
+  --sec-card-body: #94969c;
+  --sec-tile-wrap: rgba(255, 255, 255, .06);
+  --sec-tile-face: #1f242f;
+  --sec-hero-veil:
+    radial-gradient(circle at 30% 46%, rgba(12, 17, 29, .66), rgba(12, 17, 29, .3) 58%),
+    linear-gradient(180deg, rgba(12, 17, 29, .44), rgba(12, 17, 29, .66));
+}
+
+.skipLink {
+  position: fixed;
+  z-index: 500;
+  top: 12px;
+  left: 12px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: var(--sec-text-primary);
+  color: var(--sec-bg-primary) !important;
+  font-size: 14px;
+  font-weight: 600;
+  transform: translateY(-180%);
+  transition: transform 160ms cubic-bezier(.16, 1, .3, 1);
+}
+
+.skipLink:focus {
+  transform: translateY(0);
+}
+
+.main {
+  background: var(--sec-bg-primary);
+}
+
+.main:focus {
+  outline: none;
+}
+
+.securityPage a:focus-visible,
+.securityPage button:focus-visible {
+  outline: 2px solid var(--sec-bg-brand-solid);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* An exported single-colour glyph, painted through a token so it can invert. */
+.maskIcon {
+  display: block;
+  flex: 0 0 auto;
+  background: currentcolor;
+  -webkit-mask: var(--sec-glyph) center / contain no-repeat;
+  mask: var(--sec-glyph) center / contain no-repeat;
+}
+
+/* Hero */
+.hero {
+  position: relative;
+  height: 576px;
+  padding: 144px 142px 80px;
+  overflow: hidden;
+  background: var(--sec-bg-primary);
+  isolation: isolate;
+}
+
+.heroMedia {
+  position: absolute;
+  z-index: 0;
+  inset: 72px 0 0;
+  overflow: hidden;
+  background: #dceaf4 url("/enta-website/changelog/sky-poster.jpg") center 30% / cover no-repeat;
+  pointer-events: none;
+}
+
+.heroMedia::after {
+  position: absolute;
+  z-index: 1;
+  content: "";
+  inset: 0;
+  background: var(--sec-hero-veil);
+}
+
+.heroVideo {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 30%;
+}
+
+.heroRail {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  width: 849px;
+  max-width: 100%;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 40px;
+}
+
+.heroCopy {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 32px;
+}
+
+.heroCopy h1 {
+  width: 100%;
+  color: var(--sec-text-primary);
+  font-size: 64px;
+  font-weight: 700;
+  letter-spacing: -2px;
+  line-height: 70px;
+  opacity: .9;
+}
+
+.heroCopy p {
+  width: 801px;
+  max-width: 100%;
+  color: var(--sec-copy);
+  font-size: 20px;
+  font-weight: 500;
+  letter-spacing: -.3px;
+  line-height: 30px;
+}
+
+.secondaryButton {
+  display: inline-flex;
+  min-width: 127px;
+  min-height: 50px;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 16px;
+  border: 1px solid var(--sec-border-button);
+  border-radius: 12px;
+  background: transparent;
+  color: var(--sec-copy);
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: -.2px;
+  line-height: 24px;
+  transition:
+    border-color 200ms ease,
+    background-color 200ms ease,
+    transform 200ms ease;
+}
+
+.secondaryButton:hover {
+  border-color: var(--sec-text-primary);
+  background: var(--sec-bg-primary);
+  transform: translateY(-1px);
+}
+
+/* Your device passkey is the only key */
+.passkeySection {
+  min-height: 683px;
+  padding: 140px 142px;
+  background: var(--sec-bg-secondary);
+  scroll-margin-top: 88px;
+}
+
+.passkeyInner {
+  display: flex;
+  width: 100%;
+  max-width: 1156px;
+  flex-direction: column;
+  align-items: flex-start;
+  margin: 0 auto;
+  gap: 80px;
+}
+
+.passkeyHeading {
+  display: flex;
+  width: 861px;
+  max-width: 100%;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 40px;
+}
+
+.passkeyHeading h2 {
+  width: 100%;
+  color: var(--sec-text-primary);
+  font-size: 40px;
+  font-weight: 700;
+  letter-spacing: -1.7px;
+  line-height: 1.1;
+}
+
+.passkeyHeading p {
+  width: 700px;
+  max-width: 100%;
+  color: var(--sec-copy);
+  font-size: 20px;
+  font-weight: 500;
+  letter-spacing: -.3px;
+  line-height: 30px;
+}
+
+.passkeyPoints {
+  display: grid;
+  width: 100%;
+  min-height: 164px;
+  margin: 0;
+  padding: 0;
+  gap: 48px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  list-style: none;
+}
+
+.passkeyPoint {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.passkeyPoint h3 {
+  margin: 0;
+  color: var(--sec-text-primary);
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -.16px;
+  line-height: 1.5;
+}
+
+.passkeyPoint p {
+  color: var(--sec-text-tertiary);
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: -.16px;
+  line-height: 1.5;
+}
+
+/* What we cannot do and what we do */
+/*
+  The card hugs its content, which left the freed space sitting under it. The
+  block is centred in the band instead, so the space above the heading and the
+  space below the card match and the section keeps its height.
+*/
+.boundariesSection {
+  display: flex;
+  min-height: 726px;
+  flex-direction: column;
+  justify-content: center;
+  padding: 80px 142px;
+  background: var(--sec-bg-primary);
+}
+
+.boundariesInner {
+  display: flex;
+  width: 100%;
+  max-width: 1156px;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 auto;
+  gap: 48px;
+}
+
+.boundariesInner > h2 {
+  width: 690px;
+  max-width: 100%;
+  color: var(--sec-text-primary);
+  font-size: 40px;
+  font-weight: 700;
+  letter-spacing: -1.7px;
+  line-height: 1.2;
+  text-align: center;
+}
+
+/*
+  Figma pins this card at 470px, which leaves 59px of dead space under the
+  left column's footnote and reads as a bottom padding twice the top one.
+  The card hugs its content instead, so the 56px padding is even all round,
+  which is what the narrower breakpoints below already do.
+*/
+.boundariesCard {
+  display: flex;
+  width: 1148px;
+  max-width: 100%;
+  align-items: stretch;
+  justify-content: space-between;
+  padding: 56px;
+  border-radius: 32px;
+  background: var(--sec-bg-card);
+}
+
+.boundariesColumn {
+  display: flex;
+  width: 471px;
+  max-width: 100%;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 40px;
+}
+
+.boundariesColumnDo {
+  gap: 24px;
+}
+
+.boundariesHead {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.boundariesHead h3 {
+  margin: 0;
+  color: var(--sec-text-primary);
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: -.96px;
+  line-height: 1.3;
+}
+
+.boundariesHead > .maskIcon {
+  width: 20px;
+  height: 20px;
+  color: var(--sec-error-fg);
+}
+
+.boundariesHead > img {
+  display: block;
+  width: 20px;
+  height: 20px;
+  flex: 0 0 auto;
+}
+
+.boundariesList {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: flex-start;
+  margin: 0;
+  padding-inline-start: 27px;
+  gap: 16px;
+  color: var(--sec-text-secondary);
+  font-size: 18px;
+  font-weight: 400;
+  letter-spacing: -.3px;
+  line-height: 1.4;
+}
+
+.boundariesFootnote {
+  width: 394px;
+  max-width: 100%;
+  color: var(--sec-text-secondary);
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: -.3px;
+  line-height: 1.4;
+  white-space: pre-wrap;
+}
+
+.boundariesDivider {
+  width: 1px;
+  flex: 0 0 auto;
+  align-self: stretch;
+  background: var(--sec-border-secondary);
+}
+
+/* Lose your device. Keep your money. */
+.recoverySection {
+  height: 923px;
+  padding: 140px 142px;
+  background: var(--sec-bg-primary);
+}
+
+.recoveryInner {
+  width: 100%;
+  max-width: 1156px;
+  margin: 0 auto;
+}
+
+.recoveryHeading {
+  display: flex;
+  width: 798px;
+  max-width: 100%;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 40px;
+}
+
+.recoveryHeading h2 {
+  width: 650px;
+  max-width: 100%;
+  color: var(--sec-text-primary);
+  font-size: 40px;
+  font-weight: 700;
+  letter-spacing: -1.7px;
+  line-height: 1.2;
+}
+
+.recoveryHeading p {
+  width: 690px;
+  max-width: 100%;
+  color: var(--sec-copy);
+  font-size: 20px;
+  font-weight: 500;
+  letter-spacing: -.3px;
+  line-height: 30px;
+}
+
+/*
+  Figma draws the rules between the rows as zero-height lines, so three 1px
+  borders would carry the list 3px past the frame. Overlapping each rule with
+  the top padding of the row below it keeps the list on Figma's grid and leaves
+  the rule looking exactly the same.
+*/
+.recoveryList > div + div {
+  margin-top: -1px;
+}
+
+/*
+  The rows and the button are the landing page's accordion. Its stylesheet
+  reads these hooks with its own colours as fallbacks, so the landing page is
+  untouched and this block follows the security tokens instead.
+*/
+.recoveryList {
+  --feature-rule: var(--sec-border-secondary);
+  --feature-title: var(--sec-text-primary);
+  --feature-body: var(--sec-text-tertiary);
+  --feature-accent: var(--sec-bg-brand-solid);
+  --button-border: var(--sec-border-brand-alt);
+  --button-bg: var(--sec-bg-brand-solid);
+}
+
+/* Doubled so the token wins over the landing panel's own flat background. */
+.recoveryPanel.recoveryPanel {
+  background: var(--sec-bg-panel);
+}
+
+/*
+  Figma centres a 928px colour wheel on (345, 507) of the 700x400 panel, turns
+  it 155.98deg and blurs it by 32px. The offsets are percentages so the glow
+  keeps its place once the panel becomes fluid below 992px.
+*/
+.recoveryGlow {
+  position: absolute;
+  top: 10.75%;
+  left: -17%;
+  width: 132.571%;
+  height: 232%;
+  background: url("/enta-website/security/recovery-glow.svg") center / 100% 100% no-repeat;
+  filter: blur(32px);
+  pointer-events: none;
+  transform: rotate(155.98deg);
+}
+
+/* Resources */
+.resourcesSection {
+  height: 765px;
+  padding: 140px 142px;
+  background: var(--sec-bg-primary);
+}
+
+.resourcesInner {
+  display: flex;
+  width: 100%;
+  max-width: 1156px;
+  flex-direction: column;
+  align-items: flex-start;
+  margin: 0 auto;
+  gap: 40px;
+}
+
+.resourcesInner > h2 {
+  width: 619px;
+  max-width: 100%;
+  color: var(--sec-text-primary);
+  font-size: 40px;
+  font-weight: 700;
+  letter-spacing: -1.7px;
+  line-height: 1.2;
+}
+
+.resourcesCard {
+  position: relative;
+  display: flex;
+  width: 100%;
+  height: 397px;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 48px;
+  overflow: hidden;
+  border-radius: 32px;
+  background: var(--sec-bg-card);
+}
+
+/*
+  The shield bleeds past the card's bottom-right corner: 72.83px to the right
+  and 47.69px below, which the card's own clip cuts back to Figma's crop.
+*/
+.resourcesShield {
+  position: absolute;
+  right: -72.83px;
+  bottom: -47.69px;
+  width: 267.829px;
+  height: 307.685px;
+  overflow: hidden;
+  filter: blur(2.766px);
+  pointer-events: none;
+}
+
+.resourcesShield img {
+  position: absolute;
+  top: -3.63%;
+  left: -12.8%;
+  width: 124.4%;
+  height: 108.29%;
+  max-width: none;
+}
+
+.resourceList {
+  /* The rule sits in the middle of the gap, so the gap sets how far the copy
+     clears it: half of this on each side. */
+  --resource-column-gap: 64px;
+  --resource-row-gap: 40px;
+  position: relative;
+  display: grid;
+  height: 298px;
+  margin: 0;
+  padding: 0;
+  gap: var(--resource-row-gap) var(--resource-column-gap);
+  /* Fluid columns capped at the card's own width, so the three keep Figma's
+     283px at 1440 and shrink rather than being clipped on a narrower desktop. */
+  width: 100%;
+  max-width: 977px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  list-style: none;
+}
+
+.resourceItem {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+/*
+  A hairline down the middle of the 32px gap between the items, the same rule
+  the "cannot / do" card uses between its two columns.
+*/
+.resourceItem + .resourceItem::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: calc(var(--resource-column-gap) / -2);
+  width: 1px;
+  background: var(--sec-border-secondary);
+}
+
+/*
+  The page's one icon treatment - a translucent halo around a raised face with
+  the glyph inside - now lives in ../icon-tile.module.css, because the business
+  page draws the same tile. This page keeps the look by pointing that file's
+  three hooks at its own tokens; see the --tile-* block inside .securityPage.
+*/
+
+.resourceItem h3 {
+  margin: 16px 0 0;
+  color: var(--sec-card-title);
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -.44px;
+  line-height: 24px;
+}
+
+.resourceItem p {
+  margin-top: 16px;
+  color: var(--sec-card-body);
+  font-size: 16px;
+  font-weight: 400;
+  letter-spacing: -.16px;
+  line-height: 1.5;
+}
+
+.securityPage .resourceLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 0;
+  border-radius: 8px;
+  gap: 4px;
+  color: var(--sec-link-fg);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+}
+
+.resourceLink > span {
+  padding-inline: 2px;
+}
+
+.resourceLinkCapitalized > span {
+  text-transform: capitalize;
+}
+
+.resourceLink > .maskIcon {
+  width: 20px;
+  height: 20px;
+  color: currentcolor;
+}
+
+.securityPage a.resourceLink:hover {
+  color: var(--sec-text-secondary);
+}
+
+/* Responsive layout */
+@media (max-width: 1199px) {
+  .hero,
+  .passkeySection,
+  .boundariesSection,
+  .recoverySection,
+  .resourcesSection {
+    height: auto;
+  }
+
+  .hero {
+    padding: 128px 48px 88px;
+  }
+
+  .passkeySection,
+  .recoverySection,
+  .resourcesSection {
+    padding: 100px 48px;
+  }
+
+  .boundariesSection {
+    padding: 80px 48px;
+  }
+
+  .heroRail,
+  .heroCopy p,
+  .passkeyHeading,
+  .passkeyHeading p,
+  .recoveryHeading,
+  .recoveryHeading h2,
+  .recoveryHeading p,
+  .boundariesInner > h2,
+  .resourcesInner > h2 {
+    width: 100%;
+  }
+
+  .heroCopy h1 {
+    font-size: 56px;
+    letter-spacing: -1.6px;
+    line-height: 1.08;
+  }
+
+  .passkeyPoints {
+    min-height: 0;
+    gap: 40px;
+  }
+
+  .boundariesCard {
+    width: 100%;
+    height: auto;
+    padding: 48px;
+  }
+
+  .boundariesColumn {
+    width: auto;
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  .resourceList {
+    height: auto;
+    --resource-column-gap: 48px;
+  }
+
+  .resourcesCard {
+    height: auto;
+    padding: 48px;
+  }
+
+  .resourceItem {
+    gap: 32px;
+  }
+}
+
+@media (max-width: 991px) {
+  .hero {
+    padding: 120px 20px 72px;
+  }
+
+  .passkeySection,
+  .recoverySection,
+  .resourcesSection {
+    padding: 88px 20px;
+  }
+
+  .boundariesSection {
+    padding: 72px 20px;
+  }
+
+  .passkeyInner {
+    gap: 56px;
+  }
+
+  .passkeyPoints {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .boundariesCard {
+    flex-direction: column;
+    gap: 40px;
+  }
+
+  .boundariesColumn {
+    width: 100%;
+    flex: none;
+  }
+
+  .boundariesDivider {
+    width: 100%;
+    height: 1px;
+    align-self: auto;
+  }
+
+  .resourceList {
+    --resource-column-gap: 48px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .resourceItem:nth-child(odd)::before {
+    top: calc(var(--resource-row-gap) / -2);
+    right: 0;
+    bottom: auto;
+    left: 0;
+    width: auto;
+    height: 1px;
+  }
+
+  .resourcesShield {
+    right: -60px;
+    bottom: -40px;
+  }
+}
+
+@media (max-width: 767px) {
+  .hero {
+    padding: 108px 20px 64px;
+  }
+
+  .heroCopy {
+    gap: 24px;
+  }
+
+  .heroCopy h1 {
+    font-size: 40px;
+    letter-spacing: -1.2px;
+    line-height: 1.1;
+  }
+
+  .heroCopy p,
+  .passkeyHeading p,
+  .recoveryHeading p {
+    font-size: 17px;
+    line-height: 26px;
+  }
+
+  .passkeySection,
+  .recoverySection,
+  .resourcesSection {
+    padding: 80px 20px;
+  }
+
+  .boundariesSection {
+    padding: 64px 20px;
+  }
+
+  .passkeyHeading h2,
+  .boundariesInner > h2,
+  .recoveryHeading h2,
+  .resourcesInner > h2 {
+    font-size: 34px;
+    letter-spacing: -1.2px;
+    line-height: 1.16;
+  }
+
+  .passkeyHeading,
+  .recoveryHeading {
+    gap: 24px;
+  }
+
+  .passkeyPoints {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 36px;
+  }
+
+  .boundariesInner {
+    gap: 32px;
+  }
+
+  .boundariesCard {
+    padding: 32px 24px;
+    border-radius: 24px;
+  }
+
+  .boundariesHead h3 {
+    font-size: 20px;
+    letter-spacing: -.6px;
+  }
+
+  .boundariesList {
+    font-size: 17px;
+  }
+
+  .resourcesCard {
+    padding: 32px 24px;
+    border-radius: 24px;
+  }
+
+  .resourceList {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .resourceItem + .resourceItem::before {
+    top: calc(var(--resource-row-gap) / -2);
+    right: 0;
+    bottom: auto;
+    left: 0;
+    width: auto;
+    height: 1px;
+  }
+
+  .resourcesShield {
+    right: -46px;
+    bottom: -32px;
+    width: 190px;
+    height: 218.3px;
+  }
+}
+
+@media (max-width: 479px) {
+  .heroCopy h1 {
+    font-size: 34px;
+    letter-spacing: -1px;
+  }
+
+  .passkeyHeading h2,
+  .boundariesInner > h2,
+  .recoveryHeading h2,
+  .resourcesInner > h2 {
+    font-size: 30px;
+    letter-spacing: -1px;
+  }
+
+  .boundariesList {
+    padding-inline-start: 20px;
+    font-size: 16px;
+  }
+
+  .resourcesShield {
+    right: -40px;
+    bottom: -28px;
+    width: 150px;
+    height: 172.4px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skipLink,
+  .secondaryButton {
+    transition: none;
+  }
+
+  .heroVideo {
+    display: none;
+  }
+}
